@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "198174555997",
+    "firebase_url": "https://arin-beehive.firebaseio.com",
+    "project_id": "arin-beehive",
+    "storage_bucket": "arin-beehive.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:198174555997:android:7f86bd0240e2e78e",
+        "android_client_info": {
+          "package_name": "com.example.rcjoshi.mlkittext"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "198174555997-63e20a4v0hjvu651d62cjh42gn8pkv2o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDN2dRve4Uqv_biJuQghN2YIKus2ht22eg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
