@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="boards">
+        <item name="Lecture Hall 101">Lecture Hall 101:101 Lecture Hall</item>
+        <item name="Lecture Hall 102">Lecture Hall 102:102 Lecture Hall</item>
+        <item name="Lecture Hall 103">Lecture Hall 103:103 Lecture Hall</item>
+        <item name="Lab 104">Lab 104:104</item>
+        <item name="Lab 105">Lab 105:105</item>
+        <item name="Lab 106">Lab 106:106 InfoTech Lab-03 Software Engineering &amp; Database Lab</item>
+        <item name="Lab 107">Lab 107:107 InfoTech Lab-07 Networking and Security Lab</item>
+        <item name="Lab 110">Lab 110:110 InfoTech Lab-10 PG Lab</item>
+        <item name="Entrance">Entrance:Information Technology Department Welcomes You</item>
+        <item name="Entrance">Entrance:PCET\'s Pimpri Chinchwad College of Engineering</item>
+        <item name="Entrance">Entrance:Pimpri Chinchwad College of Engineering Department of Information Technology</item>
+        <item name="Lab 104">Lab 104:Free and Open-Source Software FOSS Centre</item>
+        <item name="Lab 105">Lab 105:Video Image Biometric Enhancement (VIBE)</item>
+        <item name="Lab 106">Lab 106:Massive Open Online Courses MOOCs Laboratory</item>
+        <item name="Lab 107">Lab 107:Computer Network &amp; Security (CNS)</item>
+        <item name="Lab 110">Lab 110:Centre of Research Interactive Social, Mobile, Analytics &amp; Cloud (ISMAC)</item>
+    </string-array>
+    <string-array name="destinations">
+        <item>Room 101</item>
+        <item>Room 102</item>
+        <item>Room 103</item>
+        <item>Room 104</item>
+        <item>Room 105</item>
+        <item>Room 106</item>
+        <item>Room 107</item>
+        <item>Washroom</item>
+        <item>HOD Cabin</item>
+        <item>Entrance</item>
+    </string-array>
+</resources>

@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">ARIN_Phase1</string>
+    <string name="title_activity_source_destination">SourceDestination</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="title_activity_navigate">Navigate</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+</resources>

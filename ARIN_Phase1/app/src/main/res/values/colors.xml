@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="OrangecolorMajor">#FF8000</color>
+    <color name="OrangecolorSubMajor">#F3C429</color>
+    <color name="OrangecolorMinor">#FFFF33</color>
+    <color name="OrangecolorAdditional1">#FFFF99</color>
+
+    <color name="BluecolorMajor">#3333FF</color>
+    <color name="BluecolorSubMajor">#0080FF</color>
+    <color name="BluecolorMinor">#3399FF</color>
+    <color name="BluecolorAdditional1">#66B2FF</color>
+
+    <color name="black_overlay">#66000000</color>
+</resources>
