@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="LocationG1">
+        <item>15</item>
+        <item>30</item>
+        <item>15</item>
+        <item>30</item>
+    </integer-array>
+    <integer-array name="LocationG2">
+        <item>15</item>
+        <item>30</item>
+        <item>15</item>
+        <item>30</item>
+    </integer-array>
+</resources>

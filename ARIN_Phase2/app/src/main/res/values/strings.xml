@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ARIN Phase2</string>
+    <string name="title_prev">Prev</string>
+    <string name="title_userguide">Steps</string>
+    <string name="title_next">Next</string>
+    <string name="title_activity_destination">Destination</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_source_identification">SourceIdentification</string>
+    <string name="title_activity_navigate_basic">NavigateBasic</string>
+</resources>
