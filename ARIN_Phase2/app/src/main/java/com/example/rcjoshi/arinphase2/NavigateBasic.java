@@ -3,6 +3,10 @@ package com.example.rcjoshi.arinphase2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -11,7 +15,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class NavigateBasic extends AppCompatActivity {
+public class NavigateBasic extends AppCompatActivity implements SensorEventListener, StepListener {
+
+    private StepDetector simpleStepDetector;
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private int numSteps=0;
 
     private TextView mSrcMessage,mDestMessage;
     int mDestNum=0,mSrcNum=0;
@@ -49,6 +58,12 @@ public class NavigateBasic extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigate_basic);
 
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        simpleStepDetector = new StepDetector();
+        simpleStepDetector.registerListener(this);
+        sensorManager.registerListener(NavigateBasic.this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+
         String mSavedSrc="Hello 000",mSavedDest="Hello 000";
         SharedPreferences sd=getSharedPreferences("data",Context.MODE_PRIVATE);
 
@@ -67,7 +82,7 @@ public class NavigateBasic extends AppCompatActivity {
         {   mDestNum = 109; mDestGroup=2;   }
         else
         {
-            Toast.makeText(getApplicationContext(),"Dest:"+mSavedDest.substring(mSavedDest.length() - 3),Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(),"Dest:"+mSavedDest.substring(mSavedDest.length() - 3),Toast.LENGTH_SHORT).show();
             mDestNum = Integer.parseInt(mSavedDest.substring(mSavedDest.length() - 3));
             if (mDestNum<=105)
                 mDestGroup=1;
@@ -83,7 +98,7 @@ public class NavigateBasic extends AppCompatActivity {
         {   mSrcNum = 109; mSrcGroup=2;   }
         else
         {
-            Toast.makeText(getApplicationContext(),"Src:"+mSavedSrc.substring(mSavedSrc.length() - 3),Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(),"Src:"+mSavedSrc.substring(mSavedSrc.length() - 3),Toast.LENGTH_SHORT).show();
             mSrcNum = Integer.parseInt(mSavedSrc.substring(mSavedSrc.length() - 3));
             //mSrcNum=0;
             if (mSrcNum<=105)
@@ -92,17 +107,15 @@ public class NavigateBasic extends AppCompatActivity {
                 mSrcGroup=2;
         }
 
-        // 25 15 24 14
-        // 7 24 3 24 3 20
-        mAryPtrSrc = mSrcNum-101;   // 110-101=9
-        mAryPtrDest = mDestNum-101; // 111-101=10
-        if (mAryPtrSrc>3) mAryPtrSrc-=4;    // 5
-        if (mAryPtrDest>3) mAryPtrDest-=4;  // 6
+        mAryPtrSrc = mSrcNum-101;
+        mAryPtrDest = mDestNum-101;
+        if (mAryPtrSrc>3) mAryPtrSrc-=4;
+        if (mAryPtrDest>3) mAryPtrDest-=4;
 
         if (mSrcGroup==mDestGroup)
         {
             Toast.makeText(getApplicationContext(),"Same Group",Toast.LENGTH_SHORT).show();
-            if (mSrcGroup==1 && mSrcNum>mDestNum) { // srcnum=103 destnum = 101
+            if (mSrcGroup==1 && mSrcNum>mDestNum) {
                 mDir=-1;
                 for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
                 {
@@ -144,5 +157,21 @@ public class NavigateBasic extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            simpleStepDetector.updateAccelerometer(
+                    event.timestamp, event.values[0], event.values[1], event.values[2]);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    @Override
+    public void step(long timeNs) {
+        numSteps++;
+    }
 }
-//3 24 4 25
