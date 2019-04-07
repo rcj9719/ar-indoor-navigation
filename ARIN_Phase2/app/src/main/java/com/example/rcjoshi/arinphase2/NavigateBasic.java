@@ -12,6 +12,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,9 +22,11 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
     private StepDetector simpleStepDetector;
     private SensorManager sensorManager;
     private Sensor accelerometer;
-    private int numSteps=0;
+    private int numSteps=0, limNumSteps=-1;
 
-    private TextView mSrcMessage,mDestMessage;
+    private TextView mSrcMessage,mDestMessage,mNavMsg,mNumStepsMsg;
+    private int mListenerRegistered=0;
+    Button mStartNav,mStopNav;
     int mDestNum=0,mSrcNum=0;
     int mDestGroup=0,mSrcGroup=0;
     int mDir=0;
@@ -62,96 +66,136 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         simpleStepDetector = new StepDetector();
         simpleStepDetector.registerListener(this);
+        numSteps=0;
         sensorManager.registerListener(NavigateBasic.this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+        mListenerRegistered=1;
 
-        String mSavedSrc="Hello 000",mSavedDest="Hello 000";
-        SharedPreferences sd=getSharedPreferences("data",Context.MODE_PRIVATE);
+        mSrcMessage = (TextView) findViewById(R.id.srcmessage);
+        mDestMessage = (TextView) findViewById(R.id.destmessage);
+        mNavMsg = (TextView) findViewById(R.id.navigationmsg);
+        mNumStepsMsg = (TextView) findViewById(R.id.numstepsmsg);
+        mStartNav = (Button) findViewById(R.id.startnavbtn);
+        mStopNav = (Button) findViewById(R.id.stopnavbtn);
 
-        mSavedSrc = sd.getString("sdSrc","");
-        mSavedDest = sd.getString("sdDest","");
+        mStartNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),"Navigation Started",Toast.LENGTH_SHORT).show();
 
-        Toast.makeText(getApplicationContext(),"Src: "+mSavedSrc
-                +"\nDestination: "+mSavedDest,Toast.LENGTH_SHORT).show();
+                String mSavedSrc="Hello 000",mSavedDest="Hello 000";
+                SharedPreferences sd=getSharedPreferences("data",Context.MODE_PRIVATE);
 
-        if (mSavedDest.equals("Washroom"))
-        {   Toast.makeText(getApplicationContext(),"washroom selected",Toast.LENGTH_SHORT).show();
-            mDestNum = 108; mDestGroup=2;   }
-        else if (mSavedDest.equals("Entrance"))
-        {   mDestNum = 111; mDestGroup=2;   }
-        else if (mSavedDest.equals("HOD Cabin"))
-        {   mDestNum = 109; mDestGroup=2;   }
-        else
-        {
-            //Toast.makeText(getApplicationContext(),"Dest:"+mSavedDest.substring(mSavedDest.length() - 3),Toast.LENGTH_SHORT).show();
-            mDestNum = Integer.parseInt(mSavedDest.substring(mSavedDest.length() - 3));
-            if (mDestNum<=105)
-                mDestGroup=1;
-            else
-                mDestGroup=2;
-        }
+                mSavedSrc = sd.getString("sdSrc","");
+                mSavedDest = sd.getString("sdDest","");
 
-        if (mSavedSrc.equals("Washroom"))
-        {   mSrcNum = 108; mSrcGroup=2;   }
-        else if (mSavedSrc.equals("Entrance"))
-        {   mSrcNum = 111; mSrcGroup=2;   }
-        else if (mSavedSrc.equals("HOD Cabin"))
-        {   mSrcNum = 109; mSrcGroup=2;   }
-        else
-        {
-            //Toast.makeText(getApplicationContext(),"Src:"+mSavedSrc.substring(mSavedSrc.length() - 3),Toast.LENGTH_SHORT).show();
-            mSrcNum = Integer.parseInt(mSavedSrc.substring(mSavedSrc.length() - 3));
-            //mSrcNum=0;
-            if (mSrcNum<=105)
-                mSrcGroup=1;
-            else
-                mSrcGroup=2;
-        }
+                Toast.makeText(getApplicationContext(),"Src: "+mSavedSrc
+                        +"\nDestination: "+mSavedDest,Toast.LENGTH_SHORT).show();
 
-        mAryPtrSrc = mSrcNum-101;
-        mAryPtrDest = mDestNum-101;
-        if (mAryPtrSrc>3) mAryPtrSrc-=4;
-        if (mAryPtrDest>3) mAryPtrDest-=4;
-
-        if (mSrcGroup==mDestGroup)
-        {
-            Toast.makeText(getApplicationContext(),"Same Group",Toast.LENGTH_SHORT).show();
-            if (mSrcGroup==1 && mSrcNum>mDestNum) {
-                mDir=-1;
-                for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
+                if (mSavedDest.equals("Washroom"))
+                {   Toast.makeText(getApplicationContext(),"washroom selected",Toast.LENGTH_SHORT).show();
+                    mDestNum = 108; mDestGroup=2;   }
+                else if (mSavedDest.equals("Entrance"))
+                {   mDestNum = 111; mDestGroup=2;   }
+                else if (mSavedDest.equals("HOD Cabin"))
+                {   mDestNum = 109; mDestGroup=2;   }
+                else
                 {
-                    Toast.makeText(getApplicationContext(),"Steps:"+mStepsG1[i]+"Towards Entrance",Toast.LENGTH_SHORT).show();
+                    mDestMessage.setText("Destination selected: "+mSavedDest.substring(mSavedDest.length() - 3));
+                    //Toast.makeText(getApplicationContext(),"Dest:"+mSavedDest.substring(mSavedDest.length() - 3),Toast.LENGTH_SHORT).show();
+                    mDestNum = Integer.parseInt(mSavedDest.substring(mSavedDest.length() - 3));
+                    if (mDestNum<=105)
+                        mDestGroup=1;
+                    else
+                        mDestGroup=2;
                 }
-                Toast.makeText(getApplicationContext(),"Direction: Towards Entrance",Toast.LENGTH_SHORT).show();
-            }
-            else if (mSrcGroup==1 && mSrcNum<mDestNum){
-                mDir=1;
-                for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
+
+                if (mSavedSrc.equals("Washroom"))
+                {   mSrcNum = 108; mSrcGroup=2;   }
+                else if (mSavedSrc.equals("Entrance"))
+                {   mSrcNum = 111; mSrcGroup=2;   }
+                else if (mSavedSrc.equals("HOD Cabin"))
+                {   mSrcNum = 109; mSrcGroup=2;   }
+                else
                 {
-                    Toast.makeText(getApplicationContext(),"Steps:"+mStepsG1[i]+"Towards 105",Toast.LENGTH_SHORT).show();
+                    mSrcMessage.setText("Source selected: "+mSavedSrc.substring(mSavedSrc.length() - 3));
+                    //Toast.makeText(getApplicationContext(),"Src:"+mSavedSrc.substring(mSavedSrc.length() - 3),Toast.LENGTH_SHORT).show();
+                    mSrcNum = Integer.parseInt(mSavedSrc.substring(mSavedSrc.length() - 3));
+                    //mSrcNum=0;
+                    if (mSrcNum<=105)
+                        mSrcGroup=1;
+                    else
+                        mSrcGroup=2;
                 }
-                Toast.makeText(getApplicationContext(),"Direction: Towards 105",Toast.LENGTH_SHORT).show();
-            }
-            else if (mSrcGroup==2 && mSrcNum<mDestNum){
-                mDir=1;
-                for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
+
+                mAryPtrSrc = mSrcNum-101;
+                mAryPtrDest = mDestNum-101;
+                if (mAryPtrSrc>3) mAryPtrSrc-=4;
+                if (mAryPtrDest>3) mAryPtrDest-=4;
+
+                if (mSrcGroup==mDestGroup)
                 {
-                    Toast.makeText(getApplicationContext(),"Steps:"+mStepsG2[i]+"Towards Entrance",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Same Group",Toast.LENGTH_SHORT).show();
+                    if (mSrcGroup==1 && mSrcNum>mDestNum) {
+                        mDir=-1;
+                        for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
+                        {
+                            mNavMsg.setText("Inside the loop");
+                            if (mListenerRegistered!=1) {
+                                limNumSteps = mStepsG1[i];
+                                //while (mStepsFlag==0){}
+                                mNavMsg.setText(mStepsG1[i] + " steps towards Entrance");
+                                Toast.makeText(getApplicationContext(), mStepsG1[i] +
+                                        " steps towards Entrance", Toast.LENGTH_SHORT).show();
+                                sensorManager.registerListener(NavigateBasic.this,
+                                        accelerometer,SensorManager.SENSOR_DELAY_FASTEST);
+                            }
+                            //else
+                            //    i++;
+                        }
+                        //Toast.makeText(getApplicationContext(),"Direction: Towards Entrance",Toast.LENGTH_SHORT).show();
+                    }
+                    else if (mSrcGroup==1 && mSrcNum<mDestNum){
+                        mDir=1;
+                        for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
+                        {
+                            Toast.makeText(getApplicationContext(),mStepsG1[i]+
+                                    " steps towards 105",Toast.LENGTH_SHORT).show();
+                        }
+                        //Toast.makeText(getApplicationContext(),"Direction: Towards 105",Toast.LENGTH_SHORT).show();
+                    }
+                    else if (mSrcGroup==2 && mSrcNum<mDestNum){
+                        mDir=1;
+                        for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
+                        {
+                            Toast.makeText(getApplicationContext(),mStepsG2[i]+
+                                    " steps towards Entrance",Toast.LENGTH_SHORT).show();
+                        }
+                        //Toast.makeText(getApplicationContext(),"Direction: Towards Entrance",Toast.LENGTH_SHORT).show();
+                    }
+                    else if (mSrcGroup==2 && mSrcNum>mDestNum){
+                        mDir=-1;
+                        for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
+                        {
+                            Toast.makeText(getApplicationContext(),mStepsG2[i]+
+                                    " steps towards 105",Toast.LENGTH_SHORT).show();
+                        }
+                        //Toast.makeText(getApplicationContext(),"Direction: Towards 105",Toast.LENGTH_SHORT).show();
+                    }
                 }
-                Toast.makeText(getApplicationContext(),"Direction: Towards Entrance",Toast.LENGTH_SHORT).show();
-            }
-            else if (mSrcGroup==2 && mSrcNum>mDestNum){
-                mDir=-1;
-                for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
+                else
                 {
-                    Toast.makeText(getApplicationContext(),"Steps:"+mStepsG2[i]+"Towards 105",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Cross the Passage",Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(getApplicationContext(),"Direction: Towards 105",Toast.LENGTH_SHORT).show();
             }
-        }
-        else
-        {
-            Toast.makeText(getApplicationContext(),"Cross the Passage",Toast.LENGTH_SHORT).show();
-        }
+        });
+
+        mStopNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sensorManager.unregisterListener(NavigateBasic.this);
+                mListenerRegistered=0;
+            }
+        });
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -173,5 +217,11 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
     @Override
     public void step(long timeNs) {
         numSteps++;
+        mNumStepsMsg.setText("Steps : " + numSteps);
+        if (numSteps==limNumSteps) {
+            mListenerRegistered = 0;
+            sensorManager.unregisterListener(NavigateBasic.this);
+            numSteps=0;
+        }
     }
 }

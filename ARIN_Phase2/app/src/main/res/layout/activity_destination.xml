@@ -11,8 +11,8 @@
         android:id="@+id/destination_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/destinations">
-    </ListView>
+        android:entries="@array/destinations"
+        android:paddingBottom="25dp"></ListView>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation_dest"
