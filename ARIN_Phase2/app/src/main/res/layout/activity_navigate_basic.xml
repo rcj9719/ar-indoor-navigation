@@ -70,6 +70,13 @@
             android:paddingLeft="16dp"
             android:text="TextView" />
 
+        <ListView
+            android:id="@+id/instructions_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/destinations"
+            android:paddingBottom="25dp"></ListView>
+
     </LinearLayout>
 
     <android.support.design.widget.BottomNavigationView

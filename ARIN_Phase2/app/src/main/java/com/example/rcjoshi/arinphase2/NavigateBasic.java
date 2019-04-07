@@ -13,9 +13,15 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class NavigateBasic extends AppCompatActivity implements SensorEventListener, StepListener {
 
@@ -27,6 +33,7 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
     private TextView mSrcMessage,mDestMessage,mNavMsg,mNumStepsMsg;
     private int mListenerRegistered=0;
     Button mStartNav,mStopNav;
+    ListView mInstructionListView;
     int mDestNum=0,mSrcNum=0;
     int mDestGroup=0,mSrcGroup=0;
     int mDir=0;
@@ -76,6 +83,28 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
         mNumStepsMsg = (TextView) findViewById(R.id.numstepsmsg);
         mStartNav = (Button) findViewById(R.id.startnavbtn);
         mStopNav = (Button) findViewById(R.id.stopnavbtn);
+        mInstructionListView = findViewById(R.id.instructions_list);
+
+        //initialise a new string array
+        String[] mEachInstruction = new String[]{};
+        // Create a List from String Array elements
+        final List<String> mAllInstructionList = new ArrayList<String>(Arrays.asList(mEachInstruction));
+        // Create an ArrayAdapter from List
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
+                (this, android.R.layout.simple_list_item_1, mAllInstructionList);
+        // DataBind ListView with items from ArrayAdapter
+        mInstructionListView.setAdapter(arrayAdapter);
+        // Add new Items to List
+        //mAllInstructionList.add("inst1");
+        //mAllInstructionList.add("inst2");
+                /*
+                    notifyDataSetChanged ()
+                        Notifies the attached observers that the underlying
+                        data has been changed and any View reflecting the
+                        data set should refresh itself.
+                 */
+        //arrayAdapter.notifyDataSetChanged();
+
 
         mStartNav.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,59 +161,61 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
                 if (mAryPtrSrc>3) mAryPtrSrc-=4;
                 if (mAryPtrDest>3) mAryPtrDest-=4;
 
-                if (mSrcGroup==mDestGroup)
+                if (mSrcGroup!=mDestGroup)
                 {
-                    Toast.makeText(getApplicationContext(),"Same Group",Toast.LENGTH_SHORT).show();
-                    if (mSrcGroup==1 && mSrcNum>mDestNum) {
-                        mDir=-1;
-                        for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
-                        {
-                            mNavMsg.setText("Inside the loop");
-                            if (mListenerRegistered!=1) {
-                                limNumSteps = mStepsG1[i];
-                                //while (mStepsFlag==0){}
-                                mNavMsg.setText(mStepsG1[i] + " steps towards Entrance");
-                                Toast.makeText(getApplicationContext(), mStepsG1[i] +
-                                        " steps towards Entrance", Toast.LENGTH_SHORT).show();
-                                sensorManager.registerListener(NavigateBasic.this,
-                                        accelerometer,SensorManager.SENSOR_DELAY_FASTEST);
-                            }
-                            //else
-                            //    i++;
-                        }
-                        //Toast.makeText(getApplicationContext(),"Direction: Towards Entrance",Toast.LENGTH_SHORT).show();
-                    }
-                    else if (mSrcGroup==1 && mSrcNum<mDestNum){
-                        mDir=1;
-                        for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
-                        {
-                            Toast.makeText(getApplicationContext(),mStepsG1[i]+
-                                    " steps towards 105",Toast.LENGTH_SHORT).show();
-                        }
-                        //Toast.makeText(getApplicationContext(),"Direction: Towards 105",Toast.LENGTH_SHORT).show();
-                    }
-                    else if (mSrcGroup==2 && mSrcNum<mDestNum){
-                        mDir=1;
-                        for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
-                        {
-                            Toast.makeText(getApplicationContext(),mStepsG2[i]+
-                                    " steps towards Entrance",Toast.LENGTH_SHORT).show();
-                        }
-                        //Toast.makeText(getApplicationContext(),"Direction: Towards Entrance",Toast.LENGTH_SHORT).show();
-                    }
-                    else if (mSrcGroup==2 && mSrcNum>mDestNum){
-                        mDir=-1;
-                        for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
-                        {
-                            Toast.makeText(getApplicationContext(),mStepsG2[i]+
-                                    " steps towards 105",Toast.LENGTH_SHORT).show();
-                        }
-                        //Toast.makeText(getApplicationContext(),"Direction: Towards 105",Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else
-                {
+                    mSrcNum = correspondLoc(mSrcNum);
+                    //correspondLoc(mDestNum);
                     Toast.makeText(getApplicationContext(),"Cross the Passage",Toast.LENGTH_SHORT).show();
+                }
+
+                //Toast.makeText(getApplicationContext(),"Same Group",Toast.LENGTH_SHORT).show();
+                if (mSrcGroup==1 && mSrcNum>mDestNum) {
+                    mDir=-1;
+                    for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
+                    {
+                        mNavMsg.setText("Inside the loop");
+                        //if (mListenerRegistered!=1) {
+                            //limNumSteps = mStepsG1[i];
+                            //while (mStepsFlag==0){}
+                            //mNavMsg.setText(mStepsG1[i] + " steps towards Entrance");
+                            mAllInstructionList.add(mStepsG1[i] + " steps towards Entrance");
+                            arrayAdapter.notifyDataSetChanged();
+                            Toast.makeText(getApplicationContext(), mStepsG1[i] +
+                                    " steps towards Entrance", Toast.LENGTH_SHORT).show();
+                            //sensorManager.registerListener(NavigateBasic.this,
+                            //        accelerometer,SensorManager.SENSOR_DELAY_FASTEST);
+                        //}
+                        //else
+                        //    i++;
+                    }
+                    //Toast.makeText(getApplicationContext(),"Direction: Towards Entrance",Toast.LENGTH_SHORT).show();
+                }
+                else if (mSrcGroup==1 && mSrcNum<mDestNum){
+                    mDir=1;
+                    for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
+                    {
+                        Toast.makeText(getApplicationContext(),mStepsG1[i]+
+                                " steps towards 105",Toast.LENGTH_SHORT).show();
+                    }
+                    //Toast.makeText(getApplicationContext(),"Direction: Towards 105",Toast.LENGTH_SHORT).show();
+                }
+                else if (mSrcGroup==2 && mSrcNum<mDestNum){
+                    mDir=1;
+                    for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
+                    {
+                        Toast.makeText(getApplicationContext(),mStepsG2[i]+
+                                " steps towards Entrance",Toast.LENGTH_SHORT).show();
+                    }
+                    //Toast.makeText(getApplicationContext(),"Direction: Towards Entrance",Toast.LENGTH_SHORT).show();
+                }
+                else if (mSrcGroup==2 && mSrcNum>mDestNum){
+                    mDir=-1;
+                    for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
+                    {
+                        Toast.makeText(getApplicationContext(),mStepsG2[i]+
+                                " steps towards 105",Toast.LENGTH_SHORT).show();
+                    }
+                    //Toast.makeText(getApplicationContext(),"Direction: Towards 105",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -199,6 +230,20 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
+
+    private int correspondLoc(int val) {
+        switch (val){
+            case 101: return 111;
+            case 102: return 110;
+            case 103: return 107;
+            case 104: return 106;
+            case 106: return 104;
+            case 107: return 103;
+            case 110: return 102;
+            case 111: return 101;
+            default:  return 0;
+        }
     }
 
     @Override

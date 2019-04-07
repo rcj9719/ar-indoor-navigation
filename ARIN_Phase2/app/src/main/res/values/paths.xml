@@ -12,4 +12,10 @@
         <item>15</item>
         <item>30</item>
     </integer-array>
+    <string-array name="CrossPassage">
+        <item>101:111</item>
+        <item>102:110</item>
+        <item>103:107</item>
+        <item>104:106</item>
+    </string-array>
 </resources>
