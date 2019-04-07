@@ -164,8 +164,10 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
                 if (mSrcGroup!=mDestGroup)
                 {
                     mSrcNum = correspondLoc(mSrcNum);
-                    //correspondLoc(mDestNum);
-                    Toast.makeText(getApplicationContext(),"Cross the Passage",Toast.LENGTH_SHORT).show();
+                    if (mSrcGroup==1) mSrcGroup=2;
+                    else if (mSrcGroup==2) mSrcGroup=1;
+                    mAllInstructionList.add("Cross the passage");
+                    arrayAdapter.notifyDataSetChanged();
                 }
 
                 //Toast.makeText(getApplicationContext(),"Same Group",Toast.LENGTH_SHORT).show();
@@ -194,6 +196,8 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
                     mDir=1;
                     for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
                     {
+                        mAllInstructionList.add(mStepsG1[i] + " steps towards 105");
+                        arrayAdapter.notifyDataSetChanged();
                         Toast.makeText(getApplicationContext(),mStepsG1[i]+
                                 " steps towards 105",Toast.LENGTH_SHORT).show();
                     }
@@ -203,6 +207,8 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
                     mDir=1;
                     for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
                     {
+                        mAllInstructionList.add(mStepsG2[i] + " steps towards Entrance");
+                        arrayAdapter.notifyDataSetChanged();
                         Toast.makeText(getApplicationContext(),mStepsG2[i]+
                                 " steps towards Entrance",Toast.LENGTH_SHORT).show();
                     }
@@ -212,6 +218,8 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
                     mDir=-1;
                     for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
                     {
+                        mAllInstructionList.add(mStepsG2[i] + " steps towards 105");
+                        arrayAdapter.notifyDataSetChanged();
                         Toast.makeText(getApplicationContext(),mStepsG2[i]+
                                 " steps towards 105",Toast.LENGTH_SHORT).show();
                     }
