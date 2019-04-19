@@ -9,4 +9,5 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_source_identification">SourceIdentification</string>
     <string name="title_activity_navigate_basic">NavigateBasic</string>
+    <string name="title_activity_source">Source</string>
 </resources>

@@ -169,8 +169,6 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
                     mAllInstructionList.add("Cross the passage");
                     arrayAdapter.notifyDataSetChanged();
                 }
-
-                //Toast.makeText(getApplicationContext(),"Same Group",Toast.LENGTH_SHORT).show();
                 if (mSrcGroup==1 && mSrcNum>mDestNum) {
                     mDir=-1;
                     for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
@@ -190,9 +188,8 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
                         //else
                         //    i++;
                     }
-                    //Toast.makeText(getApplicationContext(),"Direction: Towards Entrance",Toast.LENGTH_SHORT).show();
                 }
-                else if (mSrcGroup==1 && mSrcNum<mDestNum){
+                else if (mSrcGroup==1 && mSrcNum<mDestNum){ //103,104
                     mDir=1;
                     for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
                     {
@@ -201,7 +198,6 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
                         Toast.makeText(getApplicationContext(),mStepsG1[i]+
                                 " steps towards 105",Toast.LENGTH_SHORT).show();
                     }
-                    //Toast.makeText(getApplicationContext(),"Direction: Towards 105",Toast.LENGTH_SHORT).show();
                 }
                 else if (mSrcGroup==2 && mSrcNum<mDestNum){
                     mDir=1;
@@ -212,7 +208,6 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
                         Toast.makeText(getApplicationContext(),mStepsG2[i]+
                                 " steps towards Entrance",Toast.LENGTH_SHORT).show();
                     }
-                    //Toast.makeText(getApplicationContext(),"Direction: Towards Entrance",Toast.LENGTH_SHORT).show();
                 }
                 else if (mSrcGroup==2 && mSrcNum>mDestNum){
                     mDir=-1;
@@ -223,7 +218,6 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
                         Toast.makeText(getApplicationContext(),mStepsG2[i]+
                                 " steps towards 105",Toast.LENGTH_SHORT).show();
                     }
-                    //Toast.makeText(getApplicationContext(),"Direction: Towards 105",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -250,8 +244,8 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
             case 107: return 103;
             case 110: return 102;
             case 111: return 101;
-            default:  return 0;
         }
+        return -1;
     }
 
     @Override
