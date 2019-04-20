@@ -31,7 +31,7 @@
             android:name=".NavigateBasic"
             android:label="@string/title_activity_navigate_basic" />
         <activity
-            android:name=".Source"
+            android:name=".NavigateActivity"
             android:label="@string/title_activity_source">
         </activity>
         <provider

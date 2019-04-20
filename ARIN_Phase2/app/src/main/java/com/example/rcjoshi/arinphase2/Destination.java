@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +37,7 @@ public class Destination extends AppCompatActivity {
                     return true;
                 case R.id.bottom_navigation_next:
                     //mTextMessage.setText(R.string.title_notifications);
-                    Intent mNextIntent = new Intent(Destination.this,Source.class);
+                    Intent mNextIntent = new Intent(Destination.this,NavigateActivity.class);
                     startActivity(mNextIntent);
                     finish();
                     return true;

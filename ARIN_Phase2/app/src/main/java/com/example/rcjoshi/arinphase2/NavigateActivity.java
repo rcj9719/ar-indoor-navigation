@@ -2,7 +2,6 @@ package com.example.rcjoshi.arinphase2;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Camera;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,12 +12,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.PixelCopy;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -39,7 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class Source extends AppCompatActivity {
+public class NavigateActivity extends AppCompatActivity {
 
     Button mCapture,mDetect,mGallery;
     ArFragment fragment;
@@ -55,19 +52,19 @@ public class Source extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.bottom_navigation_prev:
                     //mTextMessage.setText(R.string.title_home);
-                    Intent mPrevIntent = new Intent(Source.this, Destination.class);
+                    Intent mPrevIntent = new Intent(NavigateActivity.this, Destination.class);
                     startActivity(mPrevIntent);
                     finish();
                     return true;
                 case R.id.bottom_navigation_steps:
                     //mTextMessage.setText(R.string.title_dashboard);
-                    Intent mGuideIntent = new Intent(Source.this, MainActivity.class);
+                    Intent mGuideIntent = new Intent(NavigateActivity.this, MainActivity.class);
                     startActivity(mGuideIntent);
                     finish();
                     return true;
                 case R.id.bottom_navigation_next:
                     //mTextMessage.setText(R.string.title_notifications);
-                    Intent mNextIntent = new Intent(Source.this, NavigateBasic.class);
+                    Intent mNextIntent = new Intent(NavigateActivity.this, NavigateBasic.class);
                     startActivity(mNextIntent);
                     finish();
                     return true;
@@ -80,7 +77,7 @@ public class Source extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_source);
+        setContentView(R.layout.activity_navigate);
 
         mCapture = (Button) findViewById(R.id.capturebtnid);
         mDetect = (Button) findViewById(R.id.detectbtnid);
@@ -116,7 +113,7 @@ public class Source extends AppCompatActivity {
                 try {
                     saveBitmapToDisk(bitmap, filename);
                 } catch (IOException e) {
-                    Toast toast = Toast.makeText(Source.this, e.toString(),
+                    Toast toast = Toast.makeText(NavigateActivity.this, e.toString(),
                             Toast.LENGTH_LONG);
                     toast.show();
                     return;
@@ -126,8 +123,8 @@ public class Source extends AppCompatActivity {
                 snackbar.setAction("Open in Photos", v -> {
                     File photoFile = new File(filename);
 
-                    Uri photoURI = FileProvider.getUriForFile(Source.this,
-                            Source.this.getPackageName() + ".ar.codelab.name.provider",
+                    Uri photoURI = FileProvider.getUriForFile(NavigateActivity.this,
+                            NavigateActivity.this.getPackageName() + ".ar.codelab.name.provider",
                             photoFile);
                     Intent intent = new Intent(Intent.ACTION_VIEW, photoURI);
                     intent.setDataAndType(photoURI, "image/*");
@@ -137,7 +134,7 @@ public class Source extends AppCompatActivity {
                 });
                 snackbar.show();
             } else {
-                Toast toast = Toast.makeText(Source.this,
+                Toast toast = Toast.makeText(NavigateActivity.this,
                         "Failed to copyPixels: " + copyResult, Toast.LENGTH_LONG);
                 toast.show();
             }
@@ -152,7 +149,7 @@ public class Source extends AppCompatActivity {
                 Environment.DIRECTORY_PICTURES) + File.separator + "Sceneform/" + date + "_screenshot.jpg";
     }
 
-    /*
+
     private void saveBitmapToDisk(Bitmap bitmap, String filename) throws IOException {
 
         File out = new File(filename);
@@ -169,7 +166,7 @@ public class Source extends AppCompatActivity {
             throw new IOException("Failed to save bitmap to disk", ex);
         }
     }
-*/
+
 
     private void onUpdate() {
         boolean trackingChanged = updateTracking();
