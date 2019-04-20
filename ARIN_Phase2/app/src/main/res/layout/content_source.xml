@@ -9,14 +9,16 @@
     tools:showIn="@layout/activity_source">
 
     <LinearLayout
-        android:id="@+id/optionsLayout"
+        android:id="@+id/options_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/cam_fragment"
-        app:layout_constraintTop_toBottomOf="@+id/toolbarLayout"
+        android:background="@color/colorPrimaryLight"
+        app:layout_constraintBottom_toTopOf="@+id/cam_fragment"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread"
         app:layout_constraintVertical_weight="1">
+
         <Button
             android:id="@+id/capturebtnid"
             android:layout_width="wrap_content"
@@ -30,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Detect" />
+
         <Button
             android:id="@+id/selectbtnid"
             android:layout_width="wrap_content"
@@ -43,8 +46,20 @@
         android:name="com.google.ar.sceneform.ux.ArFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintVertical_weight="9"
-        app:layout_constraintBottom_toTopOf="@+id/navigation"
-        app:layout_constraintTop_toBottomOf="@+id/optionsLayout"
-        app:layout_constraintVertical_chainStyle="spread"/>
+        app:layout_constraintTop_toBottomOf="@id/options_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_chainStyle="spread"
+        app:layout_constraintVertical_weight="9"/>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:menu="@menu/bottom_navigation" />
+
+
 </android.support.constraint.ConstraintLayout>

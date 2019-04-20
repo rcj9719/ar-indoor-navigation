@@ -38,7 +38,7 @@ public class Destination extends AppCompatActivity {
                     return true;
                 case R.id.bottom_navigation_next:
                     //mTextMessage.setText(R.string.title_notifications);
-                    Intent mNextIntent = new Intent(Destination.this,SourceIdentification.class);
+                    Intent mNextIntent = new Intent(Destination.this,Source.class);
                     startActivity(mNextIntent);
                     finish();
                     return true;

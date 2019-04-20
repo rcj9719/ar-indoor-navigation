@@ -23,7 +23,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.ar.core.Frame;
+import com.google.ar.core.HitResult;
+import com.google.ar.core.Plane;
+import com.google.ar.core.Trackable;
+import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.ArSceneView;
+import com.google.ar.sceneform.ux.ArFragment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,11 +37,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class Source extends AppCompatActivity {
 
     Button mCapture,mDetect,mGallery;
-    Fragment fragment;
+    ArFragment fragment;
+    private PointerDrawable pointer = new PointerDrawable();
+    private boolean isTracking;
+    private boolean isHitting;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -77,17 +87,20 @@ public class Source extends AppCompatActivity {
         mGallery = (Button) findViewById(R.id.selectbtnid);
 
         mCapture.setOnClickListener(view -> takePhoto());
-        fragment = (Fragment)
+        fragment = (ArFragment)
                 getSupportFragmentManager().findFragmentById(R.id.cam_fragment);
-
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        fragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
+            fragment.onUpdate(frameTime);
+            onUpdate();
+        });
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void takePhoto() {
         final String filename = generateFilename();
-        View view = fragment.getView();
+        ArSceneView view = fragment.getArSceneView();
 
         // Create a bitmap the size of the scene view.
         final Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),
@@ -98,7 +111,7 @@ public class Source extends AppCompatActivity {
         handlerThread.start();
 
         // Make the request to copy.
-        PixelCopy.request((SurfaceView) view, bitmap, (copyResult) -> {
+        PixelCopy.request(view, bitmap, (copyResult) -> {
             if (copyResult == PixelCopy.SUCCESS) {
                 try {
                     saveBitmapToDisk(bitmap, filename);
@@ -139,6 +152,7 @@ public class Source extends AppCompatActivity {
                 Environment.DIRECTORY_PICTURES) + File.separator + "Sceneform/" + date + "_screenshot.jpg";
     }
 
+    /*
     private void saveBitmapToDisk(Bitmap bitmap, String filename) throws IOException {
 
         File out = new File(filename);
@@ -155,4 +169,60 @@ public class Source extends AppCompatActivity {
             throw new IOException("Failed to save bitmap to disk", ex);
         }
     }
+*/
+
+    private void onUpdate() {
+        boolean trackingChanged = updateTracking();
+        View contentView = findViewById(android.R.id.content);
+        if (trackingChanged) {
+            if (isTracking) {
+                contentView.getOverlay().add(pointer);
+            } else {
+                contentView.getOverlay().remove(pointer);
+            }
+            contentView.invalidate();
+        }
+
+        if (isTracking) {
+            boolean hitTestChanged = updateHitTest();
+            if (hitTestChanged) {
+                pointer.setEnabled(isHitting);
+                contentView.invalidate();
+            }
+        }
+    }
+
+    private boolean updateTracking() {
+        Frame frame = fragment.getArSceneView().getArFrame();
+        boolean wasTracking = isTracking;
+        isTracking = frame != null &&
+                frame.getCamera().getTrackingState() == TrackingState.TRACKING;
+        return isTracking != wasTracking;
+    }
+
+    private boolean updateHitTest() {
+        Frame frame = fragment.getArSceneView().getArFrame();
+        android.graphics.Point pt = getScreenCenter();
+        List<HitResult> hits;
+        boolean wasHitting = isHitting;
+        isHitting = false;
+        if (frame != null) {
+            hits = frame.hitTest(pt.x, pt.y);
+            for (HitResult hit : hits) {
+                Trackable trackable = hit.getTrackable();
+                if (trackable instanceof Plane &&
+                        ((Plane) trackable).isPoseInPolygon(hit.getHitPose())) {
+                    isHitting = true;
+                    break;
+                }
+            }
+        }
+        return wasHitting != isHitting;
+    }
+
+    private android.graphics.Point getScreenCenter() {
+        View vw = findViewById(android.R.id.content);
+        return new android.graphics.Point(vw.getWidth()/2, vw.getHeight()/2);
+    }
+
 }
