@@ -1,6 +1,8 @@
 package com.example.rcjoshi.arinphase2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -20,6 +22,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
@@ -27,6 +31,10 @@ import com.google.ar.core.Trackable;
 import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.ux.ArFragment;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,7 +51,8 @@ public class NavigateActivity extends AppCompatActivity {
     private PointerDrawable pointer = new PointerDrawable();
     private boolean isTracking;
     private boolean isHitting;
-
+    private int mSourceDetectedFlag = 0, mCapturedFlag = 0, mGallerySelectFlag = 0;
+    private Bitmap mBitmap;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -84,6 +93,15 @@ public class NavigateActivity extends AppCompatActivity {
         mGallery = (Button) findViewById(R.id.selectbtnid);
 
         mCapture.setOnClickListener(view -> takePhoto());
+        mDetect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mCapturedFlag == 1 || mGallerySelectFlag == 1)
+                    detectText();
+                else
+                    Toast.makeText(getApplicationContext(), "No Image Captured", Toast.LENGTH_SHORT).show();
+            }
+        });
         fragment = (ArFragment)
                 getSupportFragmentManager().findFragmentById(R.id.cam_fragment);
         fragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
@@ -100,7 +118,7 @@ public class NavigateActivity extends AppCompatActivity {
         ArSceneView view = fragment.getArSceneView();
 
         // Create a bitmap the size of the scene view.
-        final Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),
+        mBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),
                 Bitmap.Config.ARGB_8888);
 
         // Create a handler thread to offload the processing of the image.
@@ -108,10 +126,10 @@ public class NavigateActivity extends AppCompatActivity {
         handlerThread.start();
 
         // Make the request to copy.
-        PixelCopy.request(view, bitmap, (copyResult) -> {
+        PixelCopy.request(view, mBitmap, (copyResult) -> {
             if (copyResult == PixelCopy.SUCCESS) {
                 try {
-                    saveBitmapToDisk(bitmap, filename);
+                    saveBitmapToDisk(mBitmap, filename);
                 } catch (IOException e) {
                     Toast toast = Toast.makeText(NavigateActivity.this, e.toString(),
                             Toast.LENGTH_LONG);
@@ -120,6 +138,7 @@ public class NavigateActivity extends AppCompatActivity {
                 }
                 Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
                         "Photo saved", Snackbar.LENGTH_LONG);
+                mCapturedFlag=1;
                 snackbar.setAction("Open in Photos", v -> {
                     File photoFile = new File(filename);
 
@@ -133,7 +152,8 @@ public class NavigateActivity extends AppCompatActivity {
 
                 });
                 snackbar.show();
-            } else {
+            }
+            else {
                 Toast toast = Toast.makeText(NavigateActivity.this,
                         "Failed to copyPixels: " + copyResult, Toast.LENGTH_LONG);
                 toast.show();
@@ -221,5 +241,79 @@ public class NavigateActivity extends AppCompatActivity {
         View vw = findViewById(android.R.id.content);
         return new android.graphics.Point(vw.getWidth()/2, vw.getHeight()/2);
     }
+    private void detectText() {
+        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(mBitmap);
+        FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
+                .getOnDeviceTextRecognizer();
 
+        textRecognizer.processImage(image)
+                .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+                    @Override
+                    public void onSuccess(FirebaseVisionText result) {
+                        processText(result);
+                    }
+                })
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Task failed with an exception
+                                // ...
+                            }
+                        });
+    }
+
+    private void processText(FirebaseVisionText mVisionText) {
+        List<FirebaseVisionText.TextBlock> mBlocks = mVisionText.getTextBlocks();
+        SharedPreferences sd=getSharedPreferences("data", Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed=sd.edit();
+
+        String mText;
+        if (mBlocks.size() == 0) {
+            Toast.makeText(NavigateActivity.this, "No Text Found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        //String mText = "";
+        for (FirebaseVisionText.TextBlock mBlock_i : mVisionText.getTextBlocks()) {
+            mText = mBlock_i.getText();
+            Toast.makeText(NavigateActivity.this, mText, Toast.LENGTH_SHORT).show();
+            //mSourceText.setTextSize(20);
+            //mSourceText.setText(mText);
+            mText = mText.replace("\n", " ");
+            mText = detectSource(mText);
+            if (mSourceDetectedFlag == 1) {
+                //mSourceText.setTextSize(20);
+                //mSourceText.setText(mText);
+                Snackbar.make(findViewById(android.R.id.content),
+                        "Source detected is "+mText, Snackbar.LENGTH_SHORT);
+                ed.putString("sdSrc",mText);
+                ed.commit();
+
+            } else
+                Toast.makeText(NavigateActivity.this, "Please try again", Toast.LENGTH_SHORT).show();
+        }
+        if (mSourceDetectedFlag == 1) {
+
+        }
+    }
+
+    private String detectSource(String mText) {
+        String mSource = "";
+        int mCnt = 0;
+        String[] tags = getResources().getStringArray(R.array.boards);
+        for (String tag : tags) {
+            String[] pair = tag.split(":");
+
+            String key = pair[0];
+            String value = pair[1];
+            if (value.toLowerCase().contains(mText.toLowerCase()) || mText.toLowerCase().contains(value.toLowerCase())) {
+                mSource = key;
+                mCnt++;
+            }
+        }
+        if (mCnt == 1) {
+            mSourceDetectedFlag = 1;
+        }
+        return mSource;
+    }
 }
