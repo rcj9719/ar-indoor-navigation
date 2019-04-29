@@ -1,8 +1,19 @@
 package com.example.rcjoshi.arinphase2;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 
 import com.google.ar.sceneform.ux.ArFragment;
+
+import static com.example.rcjoshi.arinphase2.SourceIdentification.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
 
 public class WritingArFragment extends ArFragment {
     @Override
