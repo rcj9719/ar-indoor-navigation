@@ -51,9 +51,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import static com.example.rcjoshi.arinphase2.SourceIdentification.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
-import static com.example.rcjoshi.arinphase2.SourceIdentification.PICK_IMAGE;
-
 public class NavigateActivity extends AppCompatActivity {
 
     Button mCapture,mDetect,mGallery;
@@ -63,6 +60,11 @@ public class NavigateActivity extends AppCompatActivity {
     private boolean isHitting;
     private int mSourceDetectedFlag = 0, mCapturedFlag = 0, mGallerySelectFlag = 0;
     private Bitmap mBitmap;
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int PICK_IMAGE = 7;
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -83,7 +85,7 @@ public class NavigateActivity extends AppCompatActivity {
                     return true;
                 case R.id.bottom_navigation_next:
                     //mTextMessage.setText(R.string.title_notifications);
-                    Intent mNextIntent = new Intent(NavigateActivity.this, NavigateBasic.class);
+                    Intent mNextIntent = new Intent(NavigateActivity.this, SourceIdentification.class);
                     startActivity(mNextIntent);
                     finish();
                     return true;
@@ -98,11 +100,21 @@ public class NavigateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigate);
 
+
+        //Camera Permissions
+        if (ContextCompat.checkSelfPermission(NavigateActivity.this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(NavigateActivity.this,
+                    new String[]{Manifest.permission.CAMERA}, REQUEST_IMAGE_CAPTURE);
+        }
+
         mCapture = (Button) findViewById(R.id.capturebtnid);
         mDetect = (Button) findViewById(R.id.detectbtnid);
         mGallery = (Button) findViewById(R.id.selectbtnid);
 
         mCapture.setOnClickListener(view -> takePhoto());
+
         mDetect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,7 +136,7 @@ public class NavigateActivity extends AppCompatActivity {
                 }
             }
         });
-        
+
         fragment = (ArFragment)
                 getSupportFragmentManager().findFragmentById(R.id.cam_fragment);
         fragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
@@ -189,7 +201,7 @@ public class NavigateActivity extends AppCompatActivity {
         String date =
                 new SimpleDateFormat("yyyyMMddHHmmss", java.util.Locale.getDefault()).format(new Date());
         return Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES) + File.separator + "ARIN/" + date + "_source.jpg";
+                Environment.DIRECTORY_PICTURES) + File.separator + "ARINCaptures/" + date + "_source.jpg";
     }
 
 

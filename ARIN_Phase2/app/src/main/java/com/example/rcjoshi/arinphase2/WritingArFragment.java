@@ -13,9 +13,8 @@ import android.widget.Toast;
 
 import com.google.ar.sceneform.ux.ArFragment;
 
-import static com.example.rcjoshi.arinphase2.SourceIdentification.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
-
 public class WritingArFragment extends ArFragment {
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
     @Override
     public String[] getAdditionalPermissions() {
         String[] additionalPermissions = super.getAdditionalPermissions();

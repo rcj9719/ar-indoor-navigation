@@ -136,8 +136,8 @@ public class MainActivity extends AppCompatActivity {
         listDataChild = new HashMap<String, List<String>>();
 
         // Adding child data
-        listDataHeader.add("Detect Current Location");
         listDataHeader.add("Select Destination");
+        listDataHeader.add("Detect Current Location");
         listDataHeader.add("Experience Navigation");
 
         // Adding child data
@@ -147,10 +147,13 @@ public class MainActivity extends AppCompatActivity {
 
         List<String> mSrcSteps = new ArrayList<String>();
         mSrcSteps.add("Identify Nearest Landmark");
-        mSrcSteps.add("Click on Detect Button");
         mSrcSteps.add("Capture the Landmark Image");
+        mSrcSteps.add("Click on Detect Button");
+        mSrcSteps.add("Repeat till landmark identified");
 
         List<String> mNavSteps = new ArrayList<String>();
+        mNavSteps.add("Point camera to floor");
+        mNavSteps.add("Wait for AR");
         mNavSteps.add("Follow the path shown");
 
         listDataChild.put(listDataHeader.get(1), mDestSteps);// Header, Child data
