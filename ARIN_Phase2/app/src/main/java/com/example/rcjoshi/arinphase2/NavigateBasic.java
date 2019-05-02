@@ -173,7 +173,7 @@ public class NavigateBasic extends AppCompatActivity implements SensorEventListe
                     mDir=-1;
                     for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
                     {
-                        mNavMsg.setText("Inside the loop");
+                        //mNavMsg.setText("Inside the loop");
                         //if (mListenerRegistered!=1) {
                             //limNumSteps = mStepsG1[i];
                             //while (mStepsFlag==0){}

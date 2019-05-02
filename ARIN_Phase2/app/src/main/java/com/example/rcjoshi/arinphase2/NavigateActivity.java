@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
@@ -45,6 +46,7 @@ import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -60,6 +62,8 @@ public class NavigateActivity extends AppCompatActivity {
     private boolean isHitting;
     private int mSourceDetectedFlag = 0, mCapturedFlag = 0, mGallerySelectFlag = 0;
     private Bitmap mBitmap;
+    Uri uri;
+    String picpath = "";
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int PICK_IMAGE = 7;
@@ -118,8 +122,11 @@ public class NavigateActivity extends AppCompatActivity {
         mDetect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mCapturedFlag == 1 || mGallerySelectFlag == 1)
+                if (mCapturedFlag == 1 || mGallerySelectFlag == 1) {
                     detectText();
+                    mCapturedFlag=0;
+                    mGallerySelectFlag=0;
+                }
                 else
                     Toast.makeText(getApplicationContext(), "No Image Captured", Toast.LENGTH_SHORT).show();
             }
@@ -143,10 +150,45 @@ public class NavigateActivity extends AppCompatActivity {
             fragment.onUpdate(frameTime);
             onUpdate();
         });
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        BottomNavigationView navigation = findViewById(R.id.bottom_navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
+            try {
+                Context applicationContext = getApplicationContext();
+                uri = data.getData();
+                picpath = uri.toString();
+                mBitmap = MediaStore.Images.Media.getBitmap(applicationContext.getContentResolver(), uri);
+                mGallerySelectFlag = 1;
+                Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
+                        "Photo saved", Snackbar.LENGTH_LONG);
+                /*snackbar.setAction("Open in Photos", v -> {
+                    File photoFile = new File(picpath);
+
+                    Uri photoURI = FileProvider.getUriForFile(NavigateActivity.this,
+                            NavigateActivity.this.getPackageName() + ".ar.codelab.name.provider",
+                            photoFile);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, photoURI);
+                    intent.setDataAndType(photoURI, "image/*");
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(intent);
+
+                });
+                */
+                snackbar.show();
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void takePhoto() {
         final String filename = generateFilename();
@@ -319,8 +361,9 @@ public class NavigateActivity extends AppCompatActivity {
             if (mSourceDetectedFlag == 1) {
                 //mSourceText.setTextSize(20);
                 //mSourceText.setText(mText);
-                Snackbar.make(findViewById(android.R.id.content),
+                Snackbar mSnackbar = Snackbar.make(findViewById(android.R.id.content),
                         "Source detected is "+mText, Snackbar.LENGTH_SHORT);
+                mSnackbar.show();
                 ed.putString("sdSrc",mText);
                 ed.commit();
 
@@ -351,7 +394,6 @@ public class NavigateActivity extends AppCompatActivity {
         }
         return mSource;
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
