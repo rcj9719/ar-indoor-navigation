@@ -165,7 +165,7 @@ public class NavigateActivity extends AppCompatActivity {
                 mBitmap = MediaStore.Images.Media.getBitmap(applicationContext.getContentResolver(), uri);
                 mGallerySelectFlag = 1;
                 Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
-                        "Photo saved", Snackbar.LENGTH_LONG);
+                        "Photo saved from Gallery", Snackbar.LENGTH_LONG);
                 /*snackbar.setAction("Open in Photos", v -> {
                     File photoFile = new File(picpath);
 
@@ -350,28 +350,43 @@ public class NavigateActivity extends AppCompatActivity {
             Toast.makeText(NavigateActivity.this, "No Text Found", Toast.LENGTH_SHORT).show();
             return;
         }
-        //String mText = "";
         for (FirebaseVisionText.TextBlock mBlock_i : mVisionText.getTextBlocks()) {
             mText = mBlock_i.getText();
             Toast.makeText(NavigateActivity.this, mText, Toast.LENGTH_SHORT).show();
-            //mSourceText.setTextSize(20);
-            //mSourceText.setText(mText);
             mText = mText.replace("\n", " ");
             mText = detectSource(mText);
             if (mSourceDetectedFlag == 1) {
-                //mSourceText.setTextSize(20);
-                //mSourceText.setText(mText);
                 Snackbar mSnackbar = Snackbar.make(findViewById(android.R.id.content),
                         "Source detected is "+mText, Snackbar.LENGTH_SHORT);
                 mSnackbar.show();
                 ed.putString("sdSrc",mText);
                 ed.commit();
 
-            } else
-                Toast.makeText(NavigateActivity.this, "Please try again", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Snackbar mSnackbar = Snackbar.make(findViewById(android.R.id.content),
+                        "Source detection failed.\nPlease capture landmark again.", Snackbar.LENGTH_SHORT);
+                mSnackbar.show();
+            }
         }
         if (mSourceDetectedFlag == 1) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+            builder.setMessage("Source Captured is "+sd.getString("sdSrc","") +
+                    "\nDestination selected is "+sd.getString("sdDest","") +
+                    "\n\nPoint camera to the floor")
+                    .setTitle("Proceed to navigation");
+            builder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked OK button
 
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                }
+            });
+            AlertDialog dialog = builder.create();
         }
     }
 

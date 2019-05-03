@@ -144,12 +144,14 @@ public class MainActivity extends AppCompatActivity {
 
         List<String> mDestSteps = new ArrayList<String>();
         mDestSteps.add("Select Destination from given list");
+        mDestSteps.add("Click Next if Destination identified");
 
         List<String> mSrcSteps = new ArrayList<String>();
         mSrcSteps.add("Identify Nearest Landmark");
-        mSrcSteps.add("Capture the Landmark Image");
+        mSrcSteps.add("Click Capture button to capture");
+        mSrcSteps.add("Or Select landmark image from Gallery");
         mSrcSteps.add("Click on Detect Button");
-        mSrcSteps.add("Repeat till landmark identified");
+        mSrcSteps.add("Repeat till source is identified");
 
         List<String> mNavSteps = new ArrayList<String>();
         mNavSteps.add("Point camera to floor");
