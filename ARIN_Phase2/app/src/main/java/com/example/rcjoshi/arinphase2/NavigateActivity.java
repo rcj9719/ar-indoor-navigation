@@ -378,7 +378,8 @@ public class NavigateActivity extends AppCompatActivity {
             builder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     // User clicked OK button
-
+                    ARNavigation arNavigation = new ARNavigation();
+                    arNavigation.startNavigation();
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -7,7 +7,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import java.util.List;
 
 public class ARNavigation extends AppCompatActivity implements SensorEventListener, StepListener{
 
-    private final int mListenerRegistered;
+    private int mListenerRegistered;
     private StepDetector simpleStepDetector;
     private SensorManager sensorManager;
     private Sensor accelerometer;
@@ -27,7 +26,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     private int mStepsG1[]={25,15,24,14},mStepsG2[]={7,25,4,24,3,20},mStepsCross=7;
     private int mAryPtrSrc,mAryPtrDest;
 
-    public ARNavigation() {
+    public void startNavigation() {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         simpleStepDetector = new StepDetector();
@@ -35,7 +34,6 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         numSteps=0;
         sensorManager.registerListener(ARNavigation.this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
         mListenerRegistered=1;
-
 
         //initialise a new string array
         String[] mEachInstruction = new String[]{};
@@ -105,36 +103,36 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             mDir=-1;
             for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
             {
-                mAllInstructionList.add(mStepsG1[i] + " steps towards Entrance");
-                Toast.makeText(getApplicationContext(), mStepsG1[i] +
-                        " steps towards Entrance", Toast.LENGTH_SHORT).show();
+                mAllInstructionList.add("Toward Entrance, take steps "+mStepsG1[i]);
+                Toast.makeText(getApplicationContext(), "Toward Entrance, take steps " +
+                        mStepsG1[i], Toast.LENGTH_SHORT).show();
             }
         }
         else if (mSrcGroup==1 && mSrcNum<mDestNum){ //103,104
             mDir=1;
             for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
             {
-                mAllInstructionList.add(mStepsG1[i] + " steps towards 105");
-                Toast.makeText(getApplicationContext(),mStepsG1[i]+
-                        " steps towards 105",Toast.LENGTH_SHORT).show();
+                mAllInstructionList.add("Toward 105, take steps "+mStepsG1[i]);
+                Toast.makeText(getApplicationContext(),"Toward 105, take steps " +
+                        mStepsG1[i],Toast.LENGTH_SHORT).show();
             }
         }
         else if (mSrcGroup==2 && mSrcNum<mDestNum){
             mDir=1;
             for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
             {
-                mAllInstructionList.add(mStepsG2[i] + " steps towards Entrance");
-                Toast.makeText(getApplicationContext(),mStepsG2[i]+
-                        " steps towards Entrance",Toast.LENGTH_SHORT).show();
+                mAllInstructionList.add("Toward Entrance, take steps " +mStepsG2[i]);
+                Toast.makeText(getApplicationContext(),"Toward Entrance, take steps " +
+                        mStepsG2[i], Toast.LENGTH_SHORT).show();
             }
         }
         else if (mSrcGroup==2 && mSrcNum>mDestNum){
             mDir=-1;
             for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
             {
-                mAllInstructionList.add(mStepsG2[i] + " steps towards 105");
-                Toast.makeText(getApplicationContext(),mStepsG2[i]+
-                        " steps towards 105",Toast.LENGTH_SHORT).show();
+                mAllInstructionList.add("Toward 105, take steps "+mStepsG2[i]);
+                Toast.makeText(getApplicationContext(),"Toward 105, take steps " +
+                        mStepsG2[i], Toast.LENGTH_SHORT).show();
             }
         }
     }
