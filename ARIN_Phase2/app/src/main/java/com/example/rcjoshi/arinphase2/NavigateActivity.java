@@ -21,6 +21,7 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -63,7 +64,8 @@ public class NavigateActivity extends AppCompatActivity {
     private int mSourceDetectedFlag = 0, mCapturedFlag = 0, mGallerySelectFlag = 0;
     private Bitmap mBitmap;
     Uri uri;
-    String picpath = "";
+    String picpath = "",mSrc,mDest;
+    List<String> mNavInstructions;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int PICK_IMAGE = 7;
@@ -89,9 +91,13 @@ public class NavigateActivity extends AppCompatActivity {
                     return true;
                 case R.id.bottom_navigation_next:
                     //mTextMessage.setText(R.string.title_notifications);
-                    Intent mNextIntent = new Intent(NavigateActivity.this, SourceIdentification.class);
-                    startActivity(mNextIntent);
-                    finish();
+                    //Intent mNextIntent = new Intent(NavigateActivity.this, SourceIdentification.class);
+                    //startActivity(mNextIntent);
+                    //finish();
+                    if (mSourceDetectedFlag == 1) {
+                        DialogFragment mAlertObject = new UserGuideAlert();
+                        mAlertObject.show(getSupportFragmentManager(),"nav");
+                    }
                     return true;
             }
             return false;
@@ -241,7 +247,8 @@ public class NavigateActivity extends AppCompatActivity {
 
     private String generateFilename() {
         String date =
-                new SimpleDateFormat("yyyyMMddHHmmss", java.util.Locale.getDefault()).format(new Date());
+                new SimpleDateFormat("yyyyMMddHHmmss", java.util.Locale.getDefault())
+                        .format(new Date());
         return Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES) + File.separator + "ARINCaptures/" + date + "_source.jpg";
     }
@@ -341,13 +348,14 @@ public class NavigateActivity extends AppCompatActivity {
     }
 
     private void processText(FirebaseVisionText mVisionText) {
-        List<FirebaseVisionText.TextBlock> mBlocks = mVisionText.getTextBlocks();
         SharedPreferences sd=getSharedPreferences("data", Context.MODE_PRIVATE);
+        List<FirebaseVisionText.TextBlock> mBlocks = mVisionText.getTextBlocks();
         SharedPreferences.Editor ed=sd.edit();
 
         String mText;
         if (mBlocks.size() == 0) {
-            Toast.makeText(NavigateActivity.this, "No Text Found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(NavigateActivity.this, "No Text Found", Toast.LENGTH_SHORT)
+                    .show();
             return;
         }
         for (FirebaseVisionText.TextBlock mBlock_i : mVisionText.getTextBlocks()) {
@@ -361,33 +369,15 @@ public class NavigateActivity extends AppCompatActivity {
                 mSnackbar.show();
                 ed.putString("sdSrc",mText);
                 ed.commit();
-
+                mSrc = sd.getString("sdSrc","");
+                mDest = sd.getString("sdDest","");
             }
             else {
                 Snackbar mSnackbar = Snackbar.make(findViewById(android.R.id.content),
-                        "Source detection failed.\nPlease capture landmark again.", Snackbar.LENGTH_SHORT);
+                        "Source detection failed.\nPlease capture landmark again.",
+                        Snackbar.LENGTH_SHORT);
                 mSnackbar.show();
             }
-        }
-        if (mSourceDetectedFlag == 1) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-            builder.setMessage("Source Captured is "+sd.getString("sdSrc","") +
-                    "\nDestination selected is "+sd.getString("sdDest","") +
-                    "\n\nPoint camera to the floor")
-                    .setTitle("Proceed to navigation");
-            builder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User clicked OK button
-                    ARNavigation arNavigation = new ARNavigation();
-                    arNavigation.startNavigation();
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User cancelled the dialog
-                }
-            });
-            AlertDialog dialog = builder.create();
         }
     }
 
@@ -400,9 +390,10 @@ public class NavigateActivity extends AppCompatActivity {
 
             String key = pair[0];
             String value = pair[1];
-            if (value.toLowerCase().contains(mText.toLowerCase()) || mText.toLowerCase().contains(value.toLowerCase())) {
+            if (value.toLowerCase().contains(mText.toLowerCase()) ||
+                    mText.toLowerCase().contains(value.toLowerCase())) {
                 mSource = key;
-                mCnt++;
+                mCnt=1;
             }
         }
         if (mCnt == 1) {

@@ -26,7 +26,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     private int mStepsG1[]={25,15,24,14},mStepsG2[]={7,25,4,24,3,20},mStepsCross=7;
     private int mAryPtrSrc,mAryPtrDest;
 
-    public void startNavigation() {
+    public List<String> startNavigation() {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         simpleStepDetector = new StepDetector();
@@ -135,6 +135,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
                         mStepsG2[i], Toast.LENGTH_SHORT).show();
             }
         }
+        return mAllInstructionList;
     }
 
     private int correspondLoc(int val) {
