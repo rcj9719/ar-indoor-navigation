@@ -1,0 +1,224 @@
+# Blender MTL File: 'twilight.blend'
+# Material Count: 22
+
+newmtl Material.000
+Ns 84.313725
+Ka 0.000000 0.000000 0.000000
+Kd 0.262144 0.262144 0.262144
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd twilight_body.png
+
+newmtl Material.002
+Ns 84.313725
+Ka 0.000000 0.000000 0.000000
+Kd 0.262144 0.262144 0.262144
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd twilight_body.png
+
+newmtl Material.003
+Ns 741.176471
+Ka 0.000000 0.000000 0.000000
+Kd 0.262144 0.262144 0.262144
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd twilight_eyes.png
+
+newmtl Material.005
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd twilight_horn.png
+
+newmtl None
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd TwilightSparkle\CrownTex.png
+map_d TwilightSparkle\\CrownTex.png
+
+newmtl _TwilightGemTex.png
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd TwilightSparkle\TwilightGemTex.png
+map_d TwilightSparkle\\TwilightGemTex.png
+
+newmtl _TwilightGemTex.png.002
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd TwilightSparkle\TwilightGemTex.png
+map_d TwilightSparkle\\TwilightGemTex.png
+
+newmtl _TwilightGemTex.png.004
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd TwilightSparkle\TwilightGemTex.png
+map_d TwilightSparkle\\TwilightGemTex.png
+
+newmtl _TwilightGemTex.png.006
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd TwilightSparkle\TwilightGemTex.png
+map_d TwilightSparkle\\TwilightGemTex.png
+
+newmtl _TwilightGemTex.png.007
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd TwilightSparkle\TwilightGemTex.png
+map_d TwilightSparkle\\TwilightGemTex.png
+
+newmtl defaultMat.001
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.533333 0.533333 0.533333
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\pony\celestia\txtr_celestia_crown.png
+
+newmtl defaultMat.003
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+
+newmtl defaultMat.005
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.533333 0.533333 0.533333
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\pony\celestia\txtr_celestia_crown.png
+
+newmtl defaultMat.005_txtr_celestia_crown.png.010
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.533333 0.533333 0.533333
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\pony\celestia\txtr_celestia_crown.png
+
+newmtl defaultMat.006
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd twilight_hair_front.png
+
+newmtl defaultMat.007
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd twilight_hair_back.png
+
+newmtl defaultMat.008
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl defaultMat.009
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl defaultMat.010
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.275089 0.143011
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl defaultMat.011
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.533333 0.533333 0.533333
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\pony\celestia\txtr_celestia_crown.png
+
+newmtl defaultMat.015
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.533333 0.533333 0.533333
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd E:\pony\celestia\txtr_celestia_crown.png
+
+newmtl twilight_tail_defaultMat.001
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd twilight_tail.png

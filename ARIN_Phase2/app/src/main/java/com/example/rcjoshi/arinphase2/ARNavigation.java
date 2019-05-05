@@ -1,13 +1,38 @@
 package com.example.rcjoshi.arinphase2;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.ar.core.Frame;
+import com.google.ar.core.HitResult;
+import com.google.ar.core.Plane;
+import com.google.ar.core.Trackable;
+import com.google.ar.core.TrackingState;
+import com.google.ar.sceneform.ux.ArFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,16 +40,72 @@ import java.util.List;
 
 public class ARNavigation extends AppCompatActivity implements SensorEventListener, StepListener{
 
-    private int mListenerRegistered;
+    ArFragment fragment;
+    private PointerDrawable pointer = new PointerDrawable();
+    private boolean isTracking;
+    private boolean isHitting;
+
     private StepDetector simpleStepDetector;
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private int numSteps=0, limNumSteps=-1;
-    private int mDestNum=0,mSrcNum=0;
-    private int mDestGroup=0,mSrcGroup=0;
-    private int mDir=0;
-    private int mStepsG1[]={25,15,24,14},mStepsG2[]={7,25,4,24,3,20},mStepsCross=7;
-    private int mAryPtrSrc,mAryPtrDest;
+
+    private int mListenerRegistered=0;
+    int mDestNum=0,mSrcNum=0;
+    int mDestGroup=0,mSrcGroup=0;
+    int mDir=0;
+    int mStepsG1[]={25,15,24,14},mStepsG2[]={7,25,4,24,3,20},mStepsCross=7;
+    int mAryPtrSrc,mAryPtrDest;
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.bottom_navigation_prev:
+                    //mTextMessage.setText(R.string.title_home);
+                    Intent mPrevIntent = new Intent(ARNavigation.this, Destination.class);
+                    startActivity(mPrevIntent);
+                    finish();
+                    return true;
+                case R.id.bottom_navigation_steps:
+                    //mTextMessage.setText(R.string.title_dashboard);
+                    Intent mGuideIntent = new Intent(ARNavigation.this, MainActivity.class);
+                    startActivity(mGuideIntent);
+                    finish();
+                    return true;
+                case R.id.bottom_navigation_next:
+                    //mTextMessage.setText(R.string.title_notifications);
+                    Intent mNextIntent = new Intent(ARNavigation.this, ARNavigation.class);
+                    startActivity(mNextIntent);
+                    finish();
+                    return true;
+            }
+            return false;
+        }
+    };
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_navigate);
+
+        fragment = (ArFragment)
+                getSupportFragmentManager().findFragmentById(R.id.cam_fragment);
+        fragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
+            fragment.onUpdate(frameTime);
+            onUpdate();
+        });
+
+        startNavigation();
+
+        BottomNavigationView navigation = findViewById(R.id.bottom_navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
+
+    //--------------------------Pedometer Navigation logic------------------------------------------
 
     public List<String> startNavigation() {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -46,8 +127,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         mSavedSrc = sd.getString("sdSrc","");
         mSavedDest = sd.getString("sdDest","");
 
-        Toast.makeText(getApplicationContext(),"Src: "+mSavedSrc
-                +"\nDestination: "+mSavedDest,Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),"Src: "+mSavedSrc+"\nDestination: "+mSavedDest,Toast.LENGTH_SHORT).show();
 
         if (mSavedDest.equals("Washroom"))
         {   Toast.makeText(getApplicationContext(),"washroom selected",Toast.LENGTH_SHORT).show();
@@ -59,8 +139,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         else
         {
             //mDestMessage.setText("Destination selected: "+mSavedDest.substring(mSavedDest.length() - 3));
-            Toast.makeText(getApplicationContext(),"Dest:" +
-                    mSavedDest.substring(mSavedDest.length() - 3),Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Dest:" +mSavedDest.substring(mSavedDest.length() - 3),Toast.LENGTH_SHORT).show();
             mDestNum = Integer.parseInt(mSavedDest.substring(mSavedDest.length() - 3));
             if (mDestNum<=105)
                 mDestGroup=1;
@@ -77,8 +156,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         else
         {
             //mSrcMessage.setText("Source selected: "+mSavedSrc.substring(mSavedSrc.length() - 3));
-            Toast.makeText(getApplicationContext(),"Src:" +
-                    mSavedSrc.substring(mSavedSrc.length() - 3),Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Src:" +mSavedSrc.substring(mSavedSrc.length() - 3),Toast.LENGTH_SHORT).show();
             mSrcNum = Integer.parseInt(mSavedSrc.substring(mSavedSrc.length() - 3));
             //mSrcNum=0;
             if (mSrcNum<=105)
@@ -104,8 +182,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
             {
                 mAllInstructionList.add("Toward Entrance, take steps "+mStepsG1[i]);
-                Toast.makeText(getApplicationContext(), "Toward Entrance, take steps " +
-                        mStepsG1[i], Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Toward Entrance, take steps " +mStepsG1[i], Toast.LENGTH_SHORT).show();
             }
         }
         else if (mSrcGroup==1 && mSrcNum<mDestNum){ //103,104
@@ -113,8 +190,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
             {
                 mAllInstructionList.add("Toward 105, take steps "+mStepsG1[i]);
-                Toast.makeText(getApplicationContext(),"Toward 105, take steps " +
-                        mStepsG1[i],Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Toward 105, take steps " +mStepsG1[i],Toast.LENGTH_SHORT).show();
             }
         }
         else if (mSrcGroup==2 && mSrcNum<mDestNum){
@@ -122,8 +198,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
             {
                 mAllInstructionList.add("Toward Entrance, take steps " +mStepsG2[i]);
-                Toast.makeText(getApplicationContext(),"Toward Entrance, take steps " +
-                        mStepsG2[i], Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Toward Entrance, take steps " +mStepsG2[i], Toast.LENGTH_SHORT).show();
             }
         }
         else if (mSrcGroup==2 && mSrcNum>mDestNum){
@@ -131,8 +206,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
             {
                 mAllInstructionList.add("Toward 105, take steps "+mStepsG2[i]);
-                Toast.makeText(getApplicationContext(),"Toward 105, take steps " +
-                        mStepsG2[i], Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Toward 105, take steps " + mStepsG2[i], Toast.LENGTH_SHORT).show();
             }
         }
         return mAllInstructionList;
@@ -151,6 +225,8 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         }
         return -1;
     }
+
+    //------------------------Sensor Management-----------------------------------------------------
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -175,4 +251,62 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             numSteps=0;
         }
     }
+
+    //---------------------------AR implementation methods------------------------------------------
+
+    private void onUpdate() {
+        boolean trackingChanged = updateTracking();
+        View contentView = findViewById(android.R.id.content);
+        if (trackingChanged) {
+            if (isTracking) {
+                contentView.getOverlay().add(pointer);
+            } else {
+                contentView.getOverlay().remove(pointer);
+            }
+            contentView.invalidate();
+        }
+
+        if (isTracking) {
+            boolean hitTestChanged = updateHitTest();
+            if (hitTestChanged) {
+                pointer.setEnabled(isHitting);
+                contentView.invalidate();
+            }
+        }
+    }
+
+    private boolean updateTracking() {
+        Frame frame = fragment.getArSceneView().getArFrame();
+        boolean wasTracking = isTracking;
+        isTracking = frame != null &&
+                frame.getCamera().getTrackingState() == TrackingState.TRACKING;
+        return isTracking != wasTracking;
+    }
+
+    private boolean updateHitTest() {
+        Frame frame = fragment.getArSceneView().getArFrame();
+        android.graphics.Point pt = getScreenCenter();
+        List<HitResult> hits;
+        boolean wasHitting = isHitting;
+        isHitting = false;
+        if (frame != null) {
+            hits = frame.hitTest(pt.x, pt.y);
+            for (HitResult hit : hits) {
+                Trackable trackable = hit.getTrackable();
+                if (trackable instanceof Plane &&
+                        ((Plane) trackable).isPoseInPolygon(hit.getHitPose())) {
+                    isHitting = true;
+                    break;
+                }
+            }
+        }
+        return wasHitting != isHitting;
+    }
+
+    private android.graphics.Point getScreenCenter() {
+        View vw = findViewById(android.R.id.content);
+        return new android.graphics.Point(vw.getWidth()/2, vw.getHeight()/2);
+    }
+
+
 }

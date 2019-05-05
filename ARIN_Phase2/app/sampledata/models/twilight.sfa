@@ -1,0 +1,361 @@
+{
+  materials: [
+    {
+      name: 'Material.000',
+      parameters: [
+        {
+          baseColor: 'twilight_body',
+        },
+        {
+          baseColorTint: [
+            0.26214399999999999,
+            0.26214399999999999,
+            0.26214399999999999,
+            1,
+          ],
+        },
+        {
+          metallic: 0,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'Material.003',
+      parameters: [
+        {
+          baseColor: 'twilight_eyes',
+        },
+        {
+          baseColorTint: [
+            0.26214399999999999,
+            0.26214399999999999,
+            0.26214399999999999,
+            1,
+          ],
+        },
+        {
+          metallic: 0,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'Material.005',
+      parameters: [
+        {
+          baseColor: 'twilight_horn',
+        },
+        {
+          baseColorTint: [
+            0.51200000000000001,
+            0.51200000000000001,
+            0.51200000000000001,
+            1,
+          ],
+        },
+        {
+          metallic: 0,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'None',
+      parameters: [
+        {
+          baseColor: null,
+        },
+        {
+          baseColorTint: [
+            0.64000000000000001,
+            0.64000000000000001,
+            0.64000000000000001,
+            1,
+          ],
+        },
+        {
+          metallic: 0,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: '_TwilightGemTex.png',
+      parameters: [
+        {
+          baseColor: null,
+        },
+        {
+          baseColorTint: [
+            0.64000000000000001,
+            0.64000000000000001,
+            0.64000000000000001,
+            1,
+          ],
+        },
+        {
+          metallic: 0,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'defaultMat.001',
+      parameters: [
+        {
+          baseColor: null,
+        },
+        {
+          baseColorTint: [
+            0.51200000000000001,
+            0.51200000000000001,
+            0.51200000000000001,
+            1,
+          ],
+        },
+        {
+          metallic: 1,
+        },
+        {
+          roughness: 0.14574300000000001,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'defaultMat.003',
+      parameters: [
+        {
+          baseColor: null,
+        },
+        {
+          baseColorTint: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          metallic: 0,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'defaultMat.006',
+      parameters: [
+        {
+          baseColor: 'twilight_hair_front',
+        },
+        {
+          baseColorTint: [
+            0.51200000000000001,
+            0.51200000000000001,
+            0.51200000000000001,
+            1,
+          ],
+        },
+        {
+          metallic: 0,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'defaultMat.007',
+      parameters: [
+        {
+          baseColor: 'twilight_hair_back',
+        },
+        {
+          baseColorTint: [
+            0.51200000000000001,
+            0.51200000000000001,
+            0.51200000000000001,
+            1,
+          ],
+        },
+        {
+          metallic: 0,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'defaultMat.008',
+      parameters: [
+        {
+          baseColor: null,
+        },
+        {
+          baseColorTint: [
+            0.64000000000000001,
+            0.64000000000000001,
+            0.64000000000000001,
+            1,
+          ],
+        },
+        {
+          metallic: 1,
+        },
+        {
+          roughness: 0.14280000000000001,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'defaultMat.010',
+      parameters: [
+        {
+          baseColor: null,
+        },
+        {
+          baseColorTint: [
+            0.64000000000000001,
+            0.27508899999999997,
+            0.143011,
+            1,
+          ],
+        },
+        {
+          metallic: 1,
+        },
+        {
+          roughness: 0.14280000000000001,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'twilight_tail_defaultMat.001',
+      parameters: [
+        {
+          baseColor: 'twilight_tail',
+        },
+        {
+          baseColorTint: [
+            0.51200000000000001,
+            0.51200000000000001,
+            0.51200000000000001,
+            1,
+          ],
+        },
+        {
+          metallic: 0,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+    ],
+    collision: {},
+    file: 'sampledata/models/twilight.obj',
+    name: 'twilight',
+    recenter: 'root',
+    scale: 0.26118799999999998,
+  },
+  samplers: [
+    {
+      file: 'sampledata/models\\twilight_hair_front.png',
+      name: 'twilight_hair_front',
+      pipeline_name: 'twilight_hair_front.png',
+    },
+    {
+      file: 'sampledata/models\\twilight_body.png',
+      name: 'twilight_body',
+      pipeline_name: 'twilight_body.png',
+    },
+    {
+      file: 'sampledata/models\\twilight_hair_back.png',
+      name: 'twilight_hair_back',
+      pipeline_name: 'twilight_hair_back.png',
+    },
+    {
+      file: 'sampledata/models\\twilight_eyes.png',
+      name: 'twilight_eyes',
+      pipeline_name: 'twilight_eyes.png',
+    },
+    {
+      file: 'sampledata/models\\twilight_horn.png',
+      name: 'twilight_horn',
+      pipeline_name: 'twilight_horn.png',
+    },
+    {
+      file: 'sampledata/models\\twilight_tail.png',
+      name: 'twilight_tail',
+      pipeline_name: 'twilight_tail.png',
+    },
+  ],
+  version: '0.54:2',
+}

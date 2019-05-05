@@ -158,8 +158,8 @@ public class MainActivity extends AppCompatActivity {
         mNavSteps.add("Wait for AR");
         mNavSteps.add("Follow the path shown");
 
-        listDataChild.put(listDataHeader.get(1), mDestSteps);// Header, Child data
-        listDataChild.put(listDataHeader.get(0), mSrcSteps);
+        listDataChild.put(listDataHeader.get(0), mDestSteps);// Header, Child data
+        listDataChild.put(listDataHeader.get(1), mSrcSteps);
         listDataChild.put(listDataHeader.get(2), mNavSteps);
     }
 

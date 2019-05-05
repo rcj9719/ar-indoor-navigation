@@ -9,6 +9,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,13 +37,18 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.ar.core.Anchor;
 import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
 import com.google.ar.core.Trackable;
 import com.google.ar.core.TrackingState;
+import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.ArSceneView;
+import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
+import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
@@ -51,25 +60,34 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
-public class NavigateActivity extends AppCompatActivity {
+public class NavigateActivity extends AppCompatActivity{
 
     Button mCapture,mDetect,mGallery;
+
     ArFragment fragment;
     private PointerDrawable pointer = new PointerDrawable();
     private boolean isTracking;
     private boolean isHitting;
+
     private int mSourceDetectedFlag = 0, mCapturedFlag = 0, mGallerySelectFlag = 0;
     private Bitmap mBitmap;
     Uri uri;
     String picpath = "",mSrc,mDest;
     List<String> mNavInstructions;
+    static int mProceedFlag=0;
+    private SensorManager sensorManager;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int PICK_IMAGE = 7;
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
+
+    //--------------------------Activity Layout-----------------------------------------------------
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -91,13 +109,9 @@ public class NavigateActivity extends AppCompatActivity {
                     return true;
                 case R.id.bottom_navigation_next:
                     //mTextMessage.setText(R.string.title_notifications);
-                    //Intent mNextIntent = new Intent(NavigateActivity.this, SourceIdentification.class);
-                    //startActivity(mNextIntent);
-                    //finish();
-                    if (mSourceDetectedFlag == 1) {
-                        DialogFragment mAlertObject = new UserGuideAlert();
-                        mAlertObject.show(getSupportFragmentManager(),"nav");
-                    }
+                    Intent mNextIntent = new Intent(NavigateActivity.this, ARNavigation.class);
+                    startActivity(mNextIntent);
+                    finish();
                     return true;
             }
             return false;
@@ -109,7 +123,6 @@ public class NavigateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigate);
-
 
         //Camera Permissions
         if (ContextCompat.checkSelfPermission(NavigateActivity.this,
@@ -149,7 +162,6 @@ public class NavigateActivity extends AppCompatActivity {
                 }
             }
         });
-
         fragment = (ArFragment)
                 getSupportFragmentManager().findFragmentById(R.id.cam_fragment);
         fragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
@@ -159,6 +171,8 @@ public class NavigateActivity extends AppCompatActivity {
         BottomNavigationView navigation = findViewById(R.id.bottom_navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
+
+    //-----------------------Image Capture and gallery select methods-------------------------------
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -172,19 +186,6 @@ public class NavigateActivity extends AppCompatActivity {
                 mGallerySelectFlag = 1;
                 Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
                         "Photo saved from Gallery", Snackbar.LENGTH_LONG);
-                /*snackbar.setAction("Open in Photos", v -> {
-                    File photoFile = new File(picpath);
-
-                    Uri photoURI = FileProvider.getUriForFile(NavigateActivity.this,
-                            NavigateActivity.this.getPackageName() + ".ar.codelab.name.provider",
-                            photoFile);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, photoURI);
-                    intent.setDataAndType(photoURI, "image/*");
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    startActivity(intent);
-
-                });
-                */
                 snackbar.show();
 
             } catch (FileNotFoundException e) {
@@ -195,6 +196,7 @@ public class NavigateActivity extends AppCompatActivity {
 
         }
     }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void takePhoto() {
         final String filename = generateFilename();
@@ -271,6 +273,7 @@ public class NavigateActivity extends AppCompatActivity {
         }
     }
 
+    //---------------------------AR implementation methods------------------------------------------
 
     private void onUpdate() {
         boolean trackingChanged = updateTracking();
@@ -325,6 +328,9 @@ public class NavigateActivity extends AppCompatActivity {
         View vw = findViewById(android.R.id.content);
         return new android.graphics.Point(vw.getWidth()/2, vw.getHeight()/2);
     }
+
+    //------------------------Source Detection methods----------------------------------------------
+
     private void detectText() {
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(mBitmap);
         FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
@@ -379,6 +385,10 @@ public class NavigateActivity extends AppCompatActivity {
                 mSnackbar.show();
             }
         }
+        if (mSourceDetectedFlag==1){
+            DialogFragment mAlertObject = new UserGuideAlert();
+            mAlertObject.show(getSupportFragmentManager(),"nav");
+        }
     }
 
     private String detectSource(String mText) {
@@ -401,6 +411,8 @@ public class NavigateActivity extends AppCompatActivity {
         }
         return mSource;
     }
+
+    //----------------------Permission checks-------------------------------------------------------
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -447,6 +459,8 @@ public class NavigateActivity extends AppCompatActivity {
             return true;
         }
     }
+
+    //---------------------------Alert Dialog Box---------------------------------------------------
 
     public void showDialog(final String msg, final Context context,
                            final String permission) {

@@ -39,3 +39,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.ar.sceneform.plugin'
+
+
+sceneform.asset('sampledata/models/twilight.obj',
+        'default',
+        'sampledata/models/twilight.sfa',
+        'src/main/assets/twilight')

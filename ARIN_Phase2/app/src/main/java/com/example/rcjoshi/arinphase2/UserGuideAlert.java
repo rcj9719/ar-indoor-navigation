@@ -3,6 +3,7 @@ package com.example.rcjoshi.arinphase2;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -19,18 +20,11 @@ public class UserGuideAlert extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
         builder.setMessage("Source and Destination are identified" +
-                "\nPoint camera to the floor")
-                .setTitle("Proceed to navigation");
+                "\nPoint camera to the floor for AR navigation and then cick next")
+                .setTitle("Navigation");
         builder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button
-                ARNavigation arNavigation = new ARNavigation();
-                mNavInstructions = arNavigation.startNavigation();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
             }
         });
         android.app.AlertDialog dialog = builder.create();
