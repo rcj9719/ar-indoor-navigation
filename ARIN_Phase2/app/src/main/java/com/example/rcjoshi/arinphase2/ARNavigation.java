@@ -50,6 +50,11 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     private Sensor accelerometer;
     private int numSteps=0, limNumSteps=-1;
 
+    //List<String> mAllInstructionList;
+    Path[] mAllInstructionList;
+    static int mInstructionNum=0;
+    private int mInstructionCnt=0;
+
     private int mListenerRegistered=0;
     int mDestNum=0,mSrcNum=0;
     int mDestGroup=0,mSrcGroup=0;
@@ -107,7 +112,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
 
     //--------------------------Pedometer Navigation logic------------------------------------------
 
-    public List<String> startNavigation() {
+    public void startNavigation() {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         simpleStepDetector = new StepDetector();
@@ -119,7 +124,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         //initialise a new string array
         String[] mEachInstruction = new String[]{};
         // Create a List from String Array elements
-        final List<String> mAllInstructionList = new ArrayList<String>(Arrays.asList(mEachInstruction));
+        //mAllInstructionList = new ArrayList<String>(Arrays.asList(mEachInstruction));
 
         String mSavedSrc="Hello 000",mSavedDest="Hello 000";
         SharedPreferences sd=getSharedPreferences("data",Context.MODE_PRIVATE);
@@ -175,13 +180,17 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             mSrcNum = correspondLoc(mSrcNum);
             if (mSrcGroup==1) mSrcGroup=2;
             else if (mSrcGroup==2) mSrcGroup=1;
-            mAllInstructionList.add("Cross the passage");
+            //mAllInstructionList.add("Cross the passage");
+            mAllInstructionList[0].setPath(0,7);
+            mInstructionCnt++;
         }
         if (mSrcGroup==1 && mSrcNum>mDestNum) {
             mDir=-1;
             for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
             {
-                mAllInstructionList.add("Toward Entrance, take steps "+mStepsG1[i]);
+                //mAllInstructionList.add(""+mDir+mStepsG1[i]);
+                mAllInstructionList[mInstructionCnt].setPath(mDir,mStepsG1[i]);
+                mInstructionCnt++;
                 Toast.makeText(getApplicationContext(), "Toward Entrance, take steps " +mStepsG1[i], Toast.LENGTH_SHORT).show();
             }
         }
@@ -189,27 +198,32 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             mDir=1;
             for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
             {
-                mAllInstructionList.add("Toward 105, take steps "+mStepsG1[i]);
+                //mAllInstructionList.add(""+mDir+mStepsG1[i]);
+                mAllInstructionList[mInstructionCnt].setPath(mDir,mStepsG1[i]);
+                mInstructionCnt++;
                 Toast.makeText(getApplicationContext(),"Toward 105, take steps " +mStepsG1[i],Toast.LENGTH_SHORT).show();
             }
         }
         else if (mSrcGroup==2 && mSrcNum<mDestNum){
-            mDir=1;
-            for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
+            mDir=-1;
+            for (int i=mAryPtrSrc; i<mAryPtrDest; i-=mDir)
             {
-                mAllInstructionList.add("Toward Entrance, take steps " +mStepsG2[i]);
+                //mAllInstructionList.add(""+mDir+mStepsG2[i]);
+                mAllInstructionList[mInstructionCnt].setPath(mDir,mStepsG2[i]);
+                mInstructionCnt++;
                 Toast.makeText(getApplicationContext(),"Toward Entrance, take steps " +mStepsG2[i], Toast.LENGTH_SHORT).show();
             }
         }
         else if (mSrcGroup==2 && mSrcNum>mDestNum){
-            mDir=-1;
-            for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
+            mDir=1;
+            for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i-=mDir)
             {
-                mAllInstructionList.add("Toward 105, take steps "+mStepsG2[i]);
+                //mAllInstructionList.add(""+mDir+mStepsG2[i]);
+                mAllInstructionList[mInstructionCnt].setPath(mDir,mStepsG2[i]);
+                mInstructionCnt++;
                 Toast.makeText(getApplicationContext(),"Toward 105, take steps " + mStepsG2[i], Toast.LENGTH_SHORT).show();
             }
         }
-        return mAllInstructionList;
     }
 
     private int correspondLoc(int val) {
@@ -226,7 +240,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         return -1;
     }
 
-    //------------------------Sensor Management-----------------------------------------------------
+    //----------------------------------Sensor Management-------------------------------------------
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -243,6 +257,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void step(long timeNs) {
+        /*
         numSteps++;
         //mNumStepsMsg.setText("Steps : " + numSteps);
         if (numSteps==limNumSteps) {
@@ -250,9 +265,15 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             sensorManager.unregisterListener(ARNavigation.this);
             numSteps=0;
         }
+        */
+        numSteps++;
+        if (numSteps==mAllInstructionList[mInstructionNum].getSteps() && mInstructionNum<mInstructionCnt){
+            mInstructionNum++;
+            numSteps=0;
+        }
     }
 
-    //---------------------------AR implementation methods------------------------------------------
+    //---------------------------AR green dot center detection methods------------------------------
 
     private void onUpdate() {
         boolean trackingChanged = updateTracking();

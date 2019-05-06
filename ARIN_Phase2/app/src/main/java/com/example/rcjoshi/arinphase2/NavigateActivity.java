@@ -164,10 +164,7 @@ public class NavigateActivity extends AppCompatActivity{
         });
         fragment = (ArFragment)
                 getSupportFragmentManager().findFragmentById(R.id.cam_fragment);
-        fragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
-            fragment.onUpdate(frameTime);
-            onUpdate();
-        });
+
         BottomNavigationView navigation = findViewById(R.id.bottom_navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
@@ -271,62 +268,6 @@ public class NavigateActivity extends AppCompatActivity{
         } catch (IOException ex) {
             throw new IOException("Failed to save bitmap to disk", ex);
         }
-    }
-
-    //---------------------------AR implementation methods------------------------------------------
-
-    private void onUpdate() {
-        boolean trackingChanged = updateTracking();
-        View contentView = findViewById(android.R.id.content);
-        if (trackingChanged) {
-            if (isTracking) {
-                contentView.getOverlay().add(pointer);
-            } else {
-                contentView.getOverlay().remove(pointer);
-            }
-            contentView.invalidate();
-        }
-
-        if (isTracking) {
-            boolean hitTestChanged = updateHitTest();
-            if (hitTestChanged) {
-                pointer.setEnabled(isHitting);
-                contentView.invalidate();
-            }
-        }
-    }
-
-    private boolean updateTracking() {
-        Frame frame = fragment.getArSceneView().getArFrame();
-        boolean wasTracking = isTracking;
-        isTracking = frame != null &&
-                frame.getCamera().getTrackingState() == TrackingState.TRACKING;
-        return isTracking != wasTracking;
-    }
-
-    private boolean updateHitTest() {
-        Frame frame = fragment.getArSceneView().getArFrame();
-        android.graphics.Point pt = getScreenCenter();
-        List<HitResult> hits;
-        boolean wasHitting = isHitting;
-        isHitting = false;
-        if (frame != null) {
-            hits = frame.hitTest(pt.x, pt.y);
-            for (HitResult hit : hits) {
-                Trackable trackable = hit.getTrackable();
-                if (trackable instanceof Plane &&
-                        ((Plane) trackable).isPoseInPolygon(hit.getHitPose())) {
-                    isHitting = true;
-                    break;
-                }
-            }
-        }
-        return wasHitting != isHitting;
-    }
-
-    private android.graphics.Point getScreenCenter() {
-        View vw = findViewById(android.R.id.content);
-        return new android.graphics.Point(vw.getWidth()/2, vw.getHeight()/2);
     }
 
     //------------------------Source Detection methods----------------------------------------------
