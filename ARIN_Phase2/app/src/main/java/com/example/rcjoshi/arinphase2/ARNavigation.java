@@ -9,6 +9,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -19,6 +20,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,16 +29,22 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.ar.core.Anchor;
 import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
 import com.google.ar.core.Trackable;
 import com.google.ar.core.TrackingState;
+import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
+import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class ARNavigation extends AppCompatActivity implements SensorEventListener, StepListener{
 
@@ -51,7 +59,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     private int numSteps=0, limNumSteps=-1;
 
     //List<String> mAllInstructionList;
-    Path[] mAllInstructionList;
+    Path[] mAllInstructionList = new Path[10];
     static int mInstructionNum=0;
     private int mInstructionCnt=0;
 
@@ -122,9 +130,10 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         mListenerRegistered=1;
 
         //initialise a new string array
-        String[] mEachInstruction = new String[]{};
+        //String[] mEachInstruction = new String[]{};
         // Create a List from String Array elements
         //mAllInstructionList = new ArrayList<String>(Arrays.asList(mEachInstruction));
+        //mAllInstructionList = new Path[10];
 
         String mSavedSrc="Hello 000",mSavedDest="Hello 000";
         SharedPreferences sd=getSharedPreferences("data",Context.MODE_PRIVATE);
@@ -181,6 +190,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             if (mSrcGroup==1) mSrcGroup=2;
             else if (mSrcGroup==2) mSrcGroup=1;
             //mAllInstructionList.add("Cross the passage");
+            mAllInstructionList[0] = new Path();
             mAllInstructionList[0].setPath(0,7);
             mInstructionCnt++;
         }
@@ -189,6 +199,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
             {
                 //mAllInstructionList.add(""+mDir+mStepsG1[i]);
+                mAllInstructionList[mInstructionCnt] = new Path();
                 mAllInstructionList[mInstructionCnt].setPath(mDir,mStepsG1[i]);
                 mInstructionCnt++;
                 Toast.makeText(getApplicationContext(), "Toward Entrance, take steps " +mStepsG1[i], Toast.LENGTH_SHORT).show();
@@ -199,6 +210,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             for (int i=mAryPtrSrc; i<mAryPtrDest; i+=mDir)
             {
                 //mAllInstructionList.add(""+mDir+mStepsG1[i]);
+                mAllInstructionList[mInstructionCnt] = new Path();
                 mAllInstructionList[mInstructionCnt].setPath(mDir,mStepsG1[i]);
                 mInstructionCnt++;
                 Toast.makeText(getApplicationContext(),"Toward 105, take steps " +mStepsG1[i],Toast.LENGTH_SHORT).show();
@@ -209,6 +221,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             for (int i=mAryPtrSrc; i<mAryPtrDest; i-=mDir)
             {
                 //mAllInstructionList.add(""+mDir+mStepsG2[i]);
+                mAllInstructionList[mInstructionCnt] = new Path();
                 mAllInstructionList[mInstructionCnt].setPath(mDir,mStepsG2[i]);
                 mInstructionCnt++;
                 Toast.makeText(getApplicationContext(),"Toward Entrance, take steps " +mStepsG2[i], Toast.LENGTH_SHORT).show();
@@ -219,6 +232,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i-=mDir)
             {
                 //mAllInstructionList.add(""+mDir+mStepsG2[i]);
+                mAllInstructionList[mInstructionCnt] = new Path();
                 mAllInstructionList[mInstructionCnt].setPath(mDir,mStepsG2[i]);
                 mInstructionCnt++;
                 Toast.makeText(getApplicationContext(),"Toward 105, take steps " + mStepsG2[i], Toast.LENGTH_SHORT).show();
@@ -270,6 +284,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         if (numSteps==mAllInstructionList[mInstructionNum].getSteps() && mInstructionNum<mInstructionCnt){
             mInstructionNum++;
             numSteps=0;
+            addObject(Uri.parse("twilight.sfb"));
         }
     }
 
@@ -329,5 +344,50 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         return new android.graphics.Point(vw.getWidth()/2, vw.getHeight()/2);
     }
 
+    //-----------------------------AR Object placement----------------------------------------------
+
+    private void addObject(Uri model) {
+        Frame frame = fragment.getArSceneView().getArFrame();
+        android.graphics.Point pt = getScreenCenter();
+        List<HitResult> hits;
+        if (frame != null) {
+            hits = frame.hitTest(pt.x, pt.y);
+            for (HitResult hit : hits) {
+                Trackable trackable = hit.getTrackable();
+                if (trackable instanceof Plane &&
+                        ((Plane) trackable).isPoseInPolygon(hit.getHitPose())) {
+                    placeObject(fragment, hit.createAnchor(), model);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void placeObject(ArFragment fragment, Anchor anchor, Uri model) {
+        CompletableFuture<Void> renderableFuture =
+                ModelRenderable.builder()
+                        .setSource(fragment.getContext(), model)
+                        .build()
+                        .thenAccept(renderable -> addNodeToScene(fragment, anchor, renderable))
+                        .exceptionally((throwable -> {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                            builder.setMessage(throwable.getMessage())
+                                    .setTitle("Codelab error!");
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                            return null;
+                        }));
+    }
+
+    private void addNodeToScene(ArFragment fragment, Anchor anchor, Renderable renderable) {
+        AnchorNode anchorNode = new AnchorNode(anchor);
+        TransformableNode node = new TransformableNode(fragment.getTransformationSystem());
+        node.setRenderable(renderable);
+        node.setParent(anchorNode);
+        fragment.getArSceneView().getScene().addChild(anchorNode);
+        node.select();
+    }
+
+    //----------------------------------------------------------------------------------------------
 
 }
