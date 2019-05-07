@@ -58,6 +58,8 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     private Sensor accelerometer;
     private int numSteps=0, limNumSteps=-1;
 
+    Button mGallery;
+
     //List<String> mAllInstructionList;
     Path[] mAllInstructionList = new Path[10];
     static int mInstructionNum=0;
@@ -281,11 +283,61 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         }
         */
         numSteps++;
+        mGallery = (Button) findViewById(R.id.selectbtnid);
+        mGallery.setText("Ped:"+numSteps);
         if (numSteps==mAllInstructionList[mInstructionNum].getSteps() && mInstructionNum<mInstructionCnt){
             mInstructionNum++;
             numSteps=0;
-            addObject(Uri.parse("twilight.sfb"));
+            addObject(Uri.parse("andy.sfb"));
         }
+        if (mInstructionNum==mInstructionCnt) {
+            sensorManager.unregisterListener(ARNavigation.this);
+            Toast.makeText(getApplicationContext(),"Destination has arrived",Toast.LENGTH_SHORT);
+        }
+    }
+
+    //-----------------------------AR Object placement----------------------------------------------
+
+    private void addObject(Uri model) {
+        Frame frame = fragment.getArSceneView().getArFrame();
+        android.graphics.Point pt = getScreenCenter();
+        List<HitResult> hits;
+        if (frame != null) {
+            hits = frame.hitTest(pt.x, pt.y);
+            for (HitResult hit : hits) {
+                Trackable trackable = hit.getTrackable();
+                if (trackable instanceof Plane &&
+                        ((Plane) trackable).isPoseInPolygon(hit.getHitPose())) {
+                    placeObject(fragment, hit.createAnchor(), model);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void placeObject(ArFragment fragment, Anchor anchor, Uri model) {
+        CompletableFuture<Void> renderableFuture =
+                ModelRenderable.builder()
+                        .setSource(fragment.getContext(), model)
+                        .build()
+                        .thenAccept(renderable -> addNodeToScene(fragment, anchor, renderable))
+                        .exceptionally((throwable -> {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                            builder.setMessage(throwable.getMessage())
+                                    .setTitle("Codelab error!");
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                            return null;
+                        }));
+    }
+
+    private void addNodeToScene(ArFragment fragment, Anchor anchor, Renderable renderable) {
+        AnchorNode anchorNode = new AnchorNode(anchor);
+        TransformableNode node = new TransformableNode(fragment.getTransformationSystem());
+        node.setRenderable(renderable);
+        node.setParent(anchorNode);
+        fragment.getArSceneView().getScene().addChild(anchorNode);
+        node.select();
     }
 
     //---------------------------AR green dot center detection methods------------------------------
@@ -342,50 +394,6 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     private android.graphics.Point getScreenCenter() {
         View vw = findViewById(android.R.id.content);
         return new android.graphics.Point(vw.getWidth()/2, vw.getHeight()/2);
-    }
-
-    //-----------------------------AR Object placement----------------------------------------------
-
-    private void addObject(Uri model) {
-        Frame frame = fragment.getArSceneView().getArFrame();
-        android.graphics.Point pt = getScreenCenter();
-        List<HitResult> hits;
-        if (frame != null) {
-            hits = frame.hitTest(pt.x, pt.y);
-            for (HitResult hit : hits) {
-                Trackable trackable = hit.getTrackable();
-                if (trackable instanceof Plane &&
-                        ((Plane) trackable).isPoseInPolygon(hit.getHitPose())) {
-                    placeObject(fragment, hit.createAnchor(), model);
-                    break;
-                }
-            }
-        }
-    }
-
-    private void placeObject(ArFragment fragment, Anchor anchor, Uri model) {
-        CompletableFuture<Void> renderableFuture =
-                ModelRenderable.builder()
-                        .setSource(fragment.getContext(), model)
-                        .build()
-                        .thenAccept(renderable -> addNodeToScene(fragment, anchor, renderable))
-                        .exceptionally((throwable -> {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                            builder.setMessage(throwable.getMessage())
-                                    .setTitle("Codelab error!");
-                            AlertDialog dialog = builder.create();
-                            dialog.show();
-                            return null;
-                        }));
-    }
-
-    private void addNodeToScene(ArFragment fragment, Anchor anchor, Renderable renderable) {
-        AnchorNode anchorNode = new AnchorNode(anchor);
-        TransformableNode node = new TransformableNode(fragment.getTransformationSystem());
-        node.setRenderable(renderable);
-        node.setParent(anchorNode);
-        fragment.getArSceneView().getScene().addChild(anchorNode);
-        node.select();
     }
 
     //----------------------------------------------------------------------------------------------
