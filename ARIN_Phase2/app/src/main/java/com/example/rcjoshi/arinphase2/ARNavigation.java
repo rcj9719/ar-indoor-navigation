@@ -1,10 +1,8 @@
 package com.example.rcjoshi.arinphase2;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -12,21 +10,14 @@ import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
@@ -41,8 +32,6 @@ import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -56,7 +45,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     private StepDetector simpleStepDetector;
     private SensorManager sensorManager;
     private Sensor accelerometer;
-    private int numSteps=0, limNumSteps=-1;
+    private int numSteps=0;
 
     Button mGallery;
 
@@ -80,7 +69,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             switch (item.getItemId()) {
                 case R.id.bottom_navigation_prev:
                     //mTextMessage.setText(R.string.title_home);
-                    Intent mPrevIntent = new Intent(ARNavigation.this, Destination.class);
+                    Intent mPrevIntent = new Intent(ARNavigation.this, SourceDetection.class);
                     startActivity(mPrevIntent);
                     finish();
                     return true;
@@ -105,7 +94,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_navigate);
+        setContentView(R.layout.activity_source_detection);
 
         fragment = (ArFragment)
                 getSupportFragmentManager().findFragmentById(R.id.cam_fragment);
@@ -273,22 +262,14 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void step(long timeNs) {
-        /*
-        numSteps++;
-        //mNumStepsMsg.setText("Steps : " + numSteps);
-        if (numSteps==limNumSteps) {
-            //mListenerRegistered = 0;
-            sensorManager.unregisterListener(ARNavigation.this);
-            numSteps=0;
-        }
-        */
+        if(numSteps==0)
+            addObject(Uri.parse("andy.sfb"));
         numSteps++;
         mGallery = (Button) findViewById(R.id.selectbtnid);
         mGallery.setText("Ped:"+numSteps);
         if (numSteps==mAllInstructionList[mInstructionNum].getSteps() && mInstructionNum<mInstructionCnt){
             mInstructionNum++;
             numSteps=0;
-            addObject(Uri.parse("andy.sfb"));
         }
         if (mInstructionNum==mInstructionCnt) {
             sensorManager.unregisterListener(ARNavigation.this);

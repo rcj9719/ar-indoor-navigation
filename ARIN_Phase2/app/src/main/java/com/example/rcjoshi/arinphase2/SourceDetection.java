@@ -9,9 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
@@ -37,18 +34,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.ar.core.Anchor;
-import com.google.ar.core.Frame;
-import com.google.ar.core.HitResult;
-import com.google.ar.core.Plane;
-import com.google.ar.core.Trackable;
-import com.google.ar.core.TrackingState;
-import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.ArSceneView;
-import com.google.ar.sceneform.rendering.ModelRenderable;
-import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
-import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
@@ -60,13 +47,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
-public class NavigateActivity extends AppCompatActivity{
+public class SourceDetection extends AppCompatActivity{
 
     Button mCapture,mDetect,mGallery;
 
@@ -97,19 +81,19 @@ public class NavigateActivity extends AppCompatActivity{
             switch (item.getItemId()) {
                 case R.id.bottom_navigation_prev:
                     //mTextMessage.setText(R.string.title_home);
-                    Intent mPrevIntent = new Intent(NavigateActivity.this, Destination.class);
+                    Intent mPrevIntent = new Intent(SourceDetection.this, Destination.class);
                     startActivity(mPrevIntent);
                     finish();
                     return true;
                 case R.id.bottom_navigation_steps:
                     //mTextMessage.setText(R.string.title_dashboard);
-                    Intent mGuideIntent = new Intent(NavigateActivity.this, MainActivity.class);
+                    Intent mGuideIntent = new Intent(SourceDetection.this, MainActivity.class);
                     startActivity(mGuideIntent);
                     finish();
                     return true;
                 case R.id.bottom_navigation_next:
                     //mTextMessage.setText(R.string.title_notifications);
-                    Intent mNextIntent = new Intent(NavigateActivity.this, ARNavigation.class);
+                    Intent mNextIntent = new Intent(SourceDetection.this, ARNavigation.class);
                     startActivity(mNextIntent);
                     finish();
                     return true;
@@ -122,13 +106,13 @@ public class NavigateActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_navigate);
+        setContentView(R.layout.activity_source_detection);
 
         //Camera Permissions
-        if (ContextCompat.checkSelfPermission(NavigateActivity.this,
+        if (ContextCompat.checkSelfPermission(SourceDetection.this,
                 Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(NavigateActivity.this,
+            ActivityCompat.requestPermissions(SourceDetection.this,
                     new String[]{Manifest.permission.CAMERA}, REQUEST_IMAGE_CAPTURE);
         }
 
@@ -154,7 +138,7 @@ public class NavigateActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
 
-                if (checkPermissionREAD_EXTERNAL_STORAGE(NavigateActivity.this)) {
+                if (checkPermissionREAD_EXTERNAL_STORAGE(SourceDetection.this)) {
                     Intent intent = new Intent();
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -213,7 +197,7 @@ public class NavigateActivity extends AppCompatActivity{
                 try {
                     saveBitmapToDisk(mBitmap, filename);
                 } catch (IOException e) {
-                    Toast toast = Toast.makeText(NavigateActivity.this, e.toString(),
+                    Toast toast = Toast.makeText(SourceDetection.this, e.toString(),
                             Toast.LENGTH_LONG);
                     toast.show();
                     return;
@@ -224,8 +208,8 @@ public class NavigateActivity extends AppCompatActivity{
                 snackbar.setAction("Open in Photos", v -> {
                     File photoFile = new File(filename);
 
-                    Uri photoURI = FileProvider.getUriForFile(NavigateActivity.this,
-                            NavigateActivity.this.getPackageName() + ".ar.codelab.name.provider",
+                    Uri photoURI = FileProvider.getUriForFile(SourceDetection.this,
+                            SourceDetection.this.getPackageName() + ".ar.codelab.name.provider",
                             photoFile);
                     Intent intent = new Intent(Intent.ACTION_VIEW, photoURI);
                     intent.setDataAndType(photoURI, "image/*");
@@ -236,7 +220,7 @@ public class NavigateActivity extends AppCompatActivity{
                 snackbar.show();
             }
             else {
-                Toast toast = Toast.makeText(NavigateActivity.this,
+                Toast toast = Toast.makeText(SourceDetection.this,
                         "Failed to copyPixels: " + copyResult, Toast.LENGTH_LONG);
                 toast.show();
             }
@@ -301,13 +285,13 @@ public class NavigateActivity extends AppCompatActivity{
 
         String mText;
         if (mBlocks.size() == 0) {
-            Toast.makeText(NavigateActivity.this, "No Text Found", Toast.LENGTH_SHORT)
+            Toast.makeText(SourceDetection.this, "No Text Found", Toast.LENGTH_SHORT)
                     .show();
             return;
         }
         for (FirebaseVisionText.TextBlock mBlock_i : mVisionText.getTextBlocks()) {
             mText = mBlock_i.getText();
-            Toast.makeText(NavigateActivity.this, mText, Toast.LENGTH_SHORT).show();
+            Toast.makeText(SourceDetection.this, mText, Toast.LENGTH_SHORT).show();
             mText = mText.replace("\n", " ");
             mText = detectSource(mText);
             if (mSourceDetectedFlag == 1) {
@@ -363,7 +347,7 @@ public class NavigateActivity extends AppCompatActivity{
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // do your stuff
                 } else {
-                    Toast.makeText(NavigateActivity.this, "GET_ACCOUNTS Denied",
+                    Toast.makeText(SourceDetection.this, "GET_ACCOUNTS Denied",
                             Toast.LENGTH_SHORT).show();
                 }
                 break;
