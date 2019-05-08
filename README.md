@@ -2,7 +2,7 @@
 ## Augmented Reality for Indoor Navigation
 Augmented Reality for Indoor Navigation System - An Android application for navigating user in an indoor environment with augmented arrows, without continuous data connectivity.
 The application consists of 3 main modules:
-  1. Source Detection (using text recognition of boards)
+  1. Source Detection (using text recognition for boards)
   2. Navigation (restricted to 1 floor)
   3. AR render (Sceneform render of ARCore)
 
@@ -16,3 +16,6 @@ This code consists of restricted navigation support for a particular indoor geog
 ## ARCore
 AR applications can be developed using any AR SDKs on a suitable platform. Some of the popular ones include Vuforia, ARCore, ARKit.
 For this application, we have used ARCore in Android Studio. For the same, we use ARFragment class to create a fragment for AR View in our application.
+
+### Updates
+Google demonstrated AR navigation already integrated with GMaps in Pixel3a in its I/O 2019. Awaiting the same beauty and exerience for indoor navigation... :)
