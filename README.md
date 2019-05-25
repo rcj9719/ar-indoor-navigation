@@ -19,3 +19,4 @@ For this application, we have used ARCore in Android Studio. For the same, we us
 
 ### Updates
 Google demonstrated AR navigation already integrated with GMaps in Pixel3a in its I/O 2019. Awaiting the same beauty and exerience for indoor navigation... :)
+Also it has pushed for more on-device applications and algorithms so as to enhance privacy and minimise the need to share user data. Pushes this project idea further, yay!
