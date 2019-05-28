@@ -182,7 +182,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             else if (mSrcGroup==2) mSrcGroup=1;
             //mAllInstructionList.add("Cross the passage");
             mAllInstructionList[0] = new Path();
-            mAllInstructionList[0].setPath(0,7);
+            mAllInstructionList[0].setPath(0,5);
             mInstructionCnt++;
         }
         if (mSrcGroup==1 && mSrcNum>mDestNum) {
@@ -263,7 +263,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     @Override
     public void step(long timeNs) {
         if(numSteps==0)
-            addObject(Uri.parse("Arrow_Right_Zneg.sfb"));
+            addObject(Uri.parse("Arrow_straight_Zneg.sfb"));
         numSteps++;
         mGallery = (Button) findViewById(R.id.selectbtnid);
         mGallery.setText("Ped:"+numSteps);
