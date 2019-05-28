@@ -42,12 +42,6 @@ dependencies {
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.ar.sceneform.plugin'
 
-
-sceneform.asset('sampledata/models/twilight.obj',
-        'default',
-        'sampledata/models/twilight.sfa',
-        'src/main/assets/twilight')
-
 sceneform.asset('sampledata/models/andy.obj',
         'default',
         'sampledata/models/andy.sfa',
@@ -62,3 +56,8 @@ sceneform.asset('sampledata/models/Arrow_straight_Zneg.obj',
         'default',
         'sampledata/models/Arrow_straight_Zneg.sfa',
         'src/main/assets/Arrow_straight_Zneg')
+
+sceneform.asset('sampledata/models/Arrow_Right_Zneg.obj',
+        'default',
+        'sampledata/models/Arrow_Right_Zneg.sfa',
+        'src/main/assets/Arrow_Right_Zneg')
