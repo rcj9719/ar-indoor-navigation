@@ -44,8 +44,17 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
 
     private StepDetector simpleStepDetector;
     private SensorManager sensorManager;
-    private Sensor accelerometer;
-    private int numSteps=0;
+    private Sensor accelerometer,magnetometer;
+    private static int numSteps=0;
+    boolean magSensor = false;
+    float[] rMat = new float[9];
+    float[] orientation = new float[3];
+    int mAbsoluteDir;
+    int mCross;
+    private float[] mLastAccelerometer = new float[3];
+    private float[] mLastMagnetometer = new float[3];
+    private boolean mLastAccelerometerSet = false;
+    private boolean mLastMagnetometerSet = false;
 
     Button mGallery;
 
@@ -114,10 +123,13 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     public void startNavigation() {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         simpleStepDetector = new StepDetector();
         simpleStepDetector.registerListener(this);
         numSteps=0;
         sensorManager.registerListener(ARNavigation.this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(ARNavigation.this, magnetometer, SensorManager.SENSOR_DELAY_UI);
+
         mListenerRegistered=1;
 
         //initialise a new string array
@@ -184,6 +196,9 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             mAllInstructionList[0] = new Path();
             mAllInstructionList[0].setPath(0,5);
             mInstructionCnt++;
+            mAllInstructionList[1] = new Path();
+            mAllInstructionList[1].setPath(0,1);
+            mInstructionCnt++;
         }
         if (mSrcGroup==1 && mSrcNum>mDestNum) {
             mDir=-1;
@@ -193,7 +208,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
                 mAllInstructionList[mInstructionCnt] = new Path();
                 mAllInstructionList[mInstructionCnt].setPath(mDir,mStepsG1[i]);
                 mInstructionCnt++;
-                Toast.makeText(getApplicationContext(), "Toward Entrance, take steps " +mStepsG1[i], Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Toward Entrance, take steps " +mStepsG1[i], Toast.LENGTH_SHORT).show();
             }
         }
         else if (mSrcGroup==1 && mSrcNum<mDestNum){ //103,104
@@ -204,7 +219,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
                 mAllInstructionList[mInstructionCnt] = new Path();
                 mAllInstructionList[mInstructionCnt].setPath(mDir,mStepsG1[i]);
                 mInstructionCnt++;
-                Toast.makeText(getApplicationContext(),"Toward 105, take steps " +mStepsG1[i],Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),"Toward 105, take steps " +mStepsG1[i],Toast.LENGTH_SHORT).show();
             }
         }
         else if (mSrcGroup==2 && mSrcNum<mDestNum){
@@ -215,7 +230,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
                 mAllInstructionList[mInstructionCnt] = new Path();
                 mAllInstructionList[mInstructionCnt].setPath(mDir,mStepsG2[i]);
                 mInstructionCnt++;
-                Toast.makeText(getApplicationContext(),"Toward Entrance, take steps " +mStepsG2[i], Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),"Toward Entrance, take steps " +mStepsG2[i], Toast.LENGTH_SHORT).show();
             }
         }
         else if (mSrcGroup==2 && mSrcNum>mDestNum){
@@ -226,7 +241,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
                 mAllInstructionList[mInstructionCnt] = new Path();
                 mAllInstructionList[mInstructionCnt].setPath(mDir,mStepsG2[i]);
                 mInstructionCnt++;
-                Toast.makeText(getApplicationContext(),"Toward 105, take steps " + mStepsG2[i], Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),"Toward 105, take steps " + mStepsG2[i], Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -245,6 +260,21 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         return -1;
     }
 
+    //----------------------------------Direction ranges--------------------------------------------
+    public int getRange(int degree){
+        int mRangeVal=0;
+        if (degree>335 || degree <25)
+            mRangeVal=1;    //N
+        else if (degree>65 && degree <115)
+            mRangeVal=2;    //E
+        else if (degree>155 && degree <205)
+            mRangeVal=3;    //S
+        else if (degree>245 && degree <295)
+            mRangeVal=4;
+        return mRangeVal;
+    }
+
+
     //----------------------------------Sensor Management-------------------------------------------
 
     @Override
@@ -252,6 +282,17 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             simpleStepDetector.updateAccelerometer(
                     event.timestamp, event.values[0], event.values[1], event.values[2]);
+            System.arraycopy(event.values, 0, mLastAccelerometer, 0, event.values.length);
+            mLastAccelerometerSet = true;
+        }
+        else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            System.arraycopy(event.values, 0, mLastMagnetometer, 0, event.values.length);
+            mLastMagnetometerSet = true;
+        }
+        if (mLastAccelerometerSet && mLastMagnetometerSet) {
+            SensorManager.getRotationMatrix(rMat, null, mLastAccelerometer, mLastMagnetometer);
+            SensorManager.getOrientation(rMat, orientation);
+            mAbsoluteDir = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;
         }
     }
 
@@ -262,15 +303,57 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void step(long timeNs) {
-        if(numSteps==0)
-            addObject(Uri.parse("Arrow_straight_Zneg.sfb"));
-        numSteps++;
+        int d=99;
+        if (mInstructionNum==1)
+            d = mAllInstructionList[1].getDir();
+        int dAll = mAllInstructionList[mInstructionNum].getDir();
         mGallery = (Button) findViewById(R.id.selectbtnid);
         mGallery.setText("Ped:"+numSteps);
+        /*
+        if (numSteps==5 && d==0)
+        {
+            addObject(Uri.parse("Arrow_Left_Zneg.sfb"));
+        }
+        */
         if (numSteps==mAllInstructionList[mInstructionNum].getSteps() && mInstructionNum<mInstructionCnt){
             mInstructionNum++;
             numSteps=0;
+            return;
         }
+        if(numSteps==0)
+        {
+            if (dAll==1 && getRange(mAbsoluteDir)==1)   //if d=1 and userdir in range 1 || d= -1 and userdir in range -1 show normal arrow
+                addObject(Uri.parse("Arrow_straight_Zneg.sfb"));
+            else if (dAll== -1 && getRange(mAbsoluteDir)==3)   //if d=1 and userdir in range 1 || d= -1 and userdir in range -1 show normal arrow
+                addObject(Uri.parse("Arrow_straight_Zneg.sfb"));
+            else if(dAll == 1 && getRange(mAbsoluteDir)== 3)  //if d=1 and userdir in range -1 || d= -1 and userdir in range 1 show rev arrow
+                addObject(Uri.parse("Arrow_straight_Zpos.sfb"));
+            else if(dAll == -1 && getRange(mAbsoluteDir)== 1)  //if d=1 and userdir in range -1 || d= -1 and userdir in range 1 show rev arrow
+                addObject(Uri.parse("Arrow_straight_Zpos.sfb"));
+
+            if (dAll==0 && mInstructionNum==0)  //crossing the passage
+            {
+                if (getRange(mAbsoluteDir)==1 && mSrcGroup==2) {    //towards 105 dir=1
+                    addObject(Uri.parse("Arrow_Right_Zneg.sfb"));
+                    mCross=1;
+                }
+                else if (getRange(mAbsoluteDir)==1 && mSrcGroup==1) {   //towards 105 dir=1
+                    addObject(Uri.parse("Arrow_Left_Zneg.sfb"));
+                    mCross=2;
+                }
+                else if (getRange(mAbsoluteDir)== 3 && mSrcGroup==2) {  //towards Ent dir= -1
+                    addObject(Uri.parse("Arrow_Left_Zneg.sfb"));
+                    mCross=3;
+                }
+                else if (getRange(mAbsoluteDir)== 3 && mSrcGroup==1) {   //towards Ent dir= -1
+                    addObject(Uri.parse("Arrow_Right_Zneg.sfb"));
+                    mCross=4;
+                }
+            }
+            if (d==0)
+                addObject(Uri.parse("Arrow_Left_Zneg.sfb"));
+        }
+        numSteps++;
         if (mInstructionNum==mInstructionCnt) {
             sensorManager.unregisterListener(ARNavigation.this);
             Toast.makeText(getApplicationContext(),"Destination has arrived",Toast.LENGTH_SHORT);
