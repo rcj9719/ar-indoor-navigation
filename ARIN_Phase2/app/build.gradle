@@ -52,3 +52,13 @@ sceneform.asset('sampledata/models/andy.obj',
         'default',
         'sampledata/models/andy.sfa',
         'src/main/assets/andy')
+
+sceneform.asset('sampledata/models/Arrow_straight_Zpos.obj',
+        'default',
+        'sampledata/models/Arrow_straight_Zpos.sfa',
+        'src/main/assets/Arrow_straight_Zpos')
+
+sceneform.asset('sampledata/models/Arrow_straight_Zneg.obj',
+        'default',
+        'sampledata/models/Arrow_straight_Zneg.sfa',
+        'src/main/assets/Arrow_straight_Zneg')

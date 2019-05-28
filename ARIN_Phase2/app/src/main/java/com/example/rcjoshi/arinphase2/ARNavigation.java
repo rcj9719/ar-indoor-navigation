@@ -263,7 +263,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     @Override
     public void step(long timeNs) {
         if(numSteps==0)
-            addObject(Uri.parse("andy.sfb"));
+            addObject(Uri.parse("Arrow_straight_Zneg.sfb"));
         numSteps++;
         mGallery = (Button) findViewById(R.id.selectbtnid);
         mGallery.setText("Ped:"+numSteps);
