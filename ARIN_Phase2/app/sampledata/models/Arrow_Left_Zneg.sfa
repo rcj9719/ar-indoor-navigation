@@ -37,7 +37,7 @@
     file: 'sampledata/models/Arrow_Left_Zneg.obj',
     name: 'Arrow_Left_Zneg',
     recenter: 'root',
-    scale: 0.05,
+    scale: 0.10,
   },
   version: '0.54:2',
 }

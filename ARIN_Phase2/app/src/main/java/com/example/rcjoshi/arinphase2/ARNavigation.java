@@ -178,7 +178,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         else
         {
             //mSrcMessage.setText("Source selected: "+mSavedSrc.substring(mSavedSrc.length() - 3));
-            Toast.makeText(getApplicationContext(),"Src:" +mSavedSrc.substring(mSavedSrc.length() - 3),Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(),"Src:" +mSavedSrc.substring(mSavedSrc.length() - 3),Toast.LENGTH_SHORT).show();
             mSrcNum = Integer.parseInt(mSavedSrc.substring(mSavedSrc.length() - 3));
             //mSrcNum=0;
             if (mSrcNum<=105)
