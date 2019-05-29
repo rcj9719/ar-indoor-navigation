@@ -38,11 +38,13 @@ import java.util.concurrent.CompletableFuture;
 
 public class ARNavigation extends AppCompatActivity implements SensorEventListener, StepListener{
 
+    //AR variables
     ArFragment fragment;
     private PointerDrawable pointer = new PointerDrawable();
     private boolean isTracking;
     private boolean isHitting;
 
+    //Sensor variables
     private StepDetector simpleStepDetector;
     private SensorManager sensorManager;
     private Sensor accelerometer,magnetometer;
@@ -57,23 +59,23 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     private boolean mLastAccelerometerSet = false;
     private boolean mLastMagnetometerSet = false;
 
-    Button mGallery;
-
-    //List<String> mAllInstructionList;
+    //Instruction List variables
     Path[] mAllInstructionList = new Path[10];
     static int mInstructionNum=0;
     private int mInstructionCnt=0;
 
-    private int mListenerRegistered=0;
+    //Navigation Logic Variables
     int mDestNum=0,mSrcNum=0;
     int mDestGroup=0,mSrcGroup=0;
     int mDir=0;
     int mStepsG1[]={25,15,24,14},mStepsG2[]={7,25,4,24,3,20},mStepsCross=7;
     int mAryPtrSrc,mAryPtrDest;
 
+    //UI variables
+    Button mGallery;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
@@ -91,7 +93,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
                     return true;
                 case R.id.bottom_navigation_next:
                     //mTextMessage.setText(R.string.title_notifications);
-                    Intent mNextIntent = new Intent(ARNavigation.this, ARNavigation.class);
+                    Intent mNextIntent = new Intent(ARNavigation.this, MainActivity.class);
                     startActivity(mNextIntent);
                     finish();
                     return true;
@@ -106,6 +108,8 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_source_detection);
 
+        mInstructionNum=0;
+        numSteps=0;
         fragment = (ArFragment)
                 getSupportFragmentManager().findFragmentById(R.id.cam_fragment);
         fragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
@@ -128,10 +132,10 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         simpleStepDetector = new StepDetector();
         simpleStepDetector.registerListener(this);
         numSteps=0;
-        sensorManager.registerListener(ARNavigation.this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
-        sensorManager.registerListener(ARNavigation.this, magnetometer, SensorManager.SENSOR_DELAY_UI);
-
-        mListenerRegistered=1;
+        sensorManager.registerListener(ARNavigation.this, accelerometer,
+                SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(ARNavigation.this, magnetometer,
+                SensorManager.SENSOR_DELAY_UI);
 
         //initialise a new string array
         //String[] mEachInstruction = new String[]{};
@@ -313,22 +317,19 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             d = mAllInstructionList[1].getDir();
         if (mInstructionNum<mInstructionCnt)
             dAll = mAllInstructionList[mInstructionNum].getDir();
-        else if (mInstructionNum==mInstructionCnt-1) {
-            sensorManager.unregisterListener(ARNavigation.this);
-            Toast.makeText(getApplicationContext(),"Destination has arrived",Toast.LENGTH_SHORT);
-        }
 
         mGallery.setText("Ped:"+numSteps);
-        /*
-        if (numSteps==5 && d==0)
-        {
-            addObject(Uri.parse("Arrow_Left_Zneg.sfb"));
-        }
-        */
+
         if (numSteps==mAllInstructionList[mInstructionNum].getSteps() && mInstructionNum<mInstructionCnt){
             mInstructionNum++;
             numSteps=0;
-            return;
+            if (mInstructionNum==mInstructionCnt) {
+                sensorManager.unregisterListener(ARNavigation.this);
+                Intent mNextIntent = new Intent(ARNavigation.this, MainActivity.class);
+                startActivity(mNextIntent);
+                finish();
+                Toast.makeText(getApplicationContext(),"Destination has arrived",Toast.LENGTH_SHORT);
+            }
         }
         if(numSteps==0)
         {
