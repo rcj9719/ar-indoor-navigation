@@ -385,8 +385,6 @@ public class SourceDetection extends AppCompatActivity{
         }
     }
 
-    //---------------------------Alert Dialog Box---------------------------------------------------
-
     public void showDialog(final String msg, final Context context,
                            final String permission) {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);

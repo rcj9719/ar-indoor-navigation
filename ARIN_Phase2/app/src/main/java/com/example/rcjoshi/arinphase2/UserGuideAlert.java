@@ -19,11 +19,10 @@ public class UserGuideAlert extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
-        builder.setMessage("Source and Destination are identified" +
-                "\n1. Point camera to the floor for AR navigation" +
-                "\n2. Click next")
+        builder.setMessage("1. Source and Destination identified" +
+                "\n2. Click next for AR")
                 .setTitle("Navigation");
-        builder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button
             }

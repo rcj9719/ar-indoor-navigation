@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -50,7 +51,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     float[] rMat = new float[9];
     float[] orientation = new float[3];
     int mAbsoluteDir;
-    int mCross;
+    int mCross=0;
     private float[] mLastAccelerometer = new float[3];
     private float[] mLastMagnetometer = new float[3];
     private boolean mLastAccelerometerSet = false;
@@ -293,6 +294,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             SensorManager.getRotationMatrix(rMat, null, mLastAccelerometer, mLastMagnetometer);
             SensorManager.getOrientation(rMat, orientation);
             mAbsoluteDir = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;
+            mAbsoluteDir = Math.round(mAbsoluteDir);
         }
     }
 
@@ -303,11 +305,19 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void step(long timeNs) {
-        int d=99;
-        if (mInstructionNum==1)
-            d = mAllInstructionList[1].getDir();
-        int dAll = mAllInstructionList[mInstructionNum].getDir();
+        int d=99,dAll=99;
+        Snackbar snackbar;
         mGallery = (Button) findViewById(R.id.selectbtnid);
+
+        if (mInstructionNum==1 && mInstructionNum<mInstructionCnt)
+            d = mAllInstructionList[1].getDir();
+        if (mInstructionNum<mInstructionCnt)
+            dAll = mAllInstructionList[mInstructionNum].getDir();
+        else if (mInstructionNum==mInstructionCnt-1) {
+            sensorManager.unregisterListener(ARNavigation.this);
+            Toast.makeText(getApplicationContext(),"Destination has arrived",Toast.LENGTH_SHORT);
+        }
+
         mGallery.setText("Ped:"+numSteps);
         /*
         if (numSteps==5 && d==0)
@@ -322,42 +332,86 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         }
         if(numSteps==0)
         {
-            if (dAll==1 && getRange(mAbsoluteDir)==1)   //if d=1 and userdir in range 1 || d= -1 and userdir in range -1 show normal arrow
+            if (dAll==1 && getRange(mAbsoluteDir)==1 && mCross!=1){
                 addObject(Uri.parse("Arrow_straight_Zneg.sfb"));
-            else if (dAll== -1 && getRange(mAbsoluteDir)==3)   //if d=1 and userdir in range 1 || d= -1 and userdir in range -1 show normal arrow
+                snackbar = Snackbar.make(findViewById(android.R.id.content),
+                        "Straight ahead", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }   //if d=1 and userdir in range 1 || d= -1 and userdir in range -1 show normal arrow
+
+            else if (dAll== -1 && getRange(mAbsoluteDir)==3 && mCross!=1){
                 addObject(Uri.parse("Arrow_straight_Zneg.sfb"));
-            else if(dAll == 1 && getRange(mAbsoluteDir)== 3)  //if d=1 and userdir in range -1 || d= -1 and userdir in range 1 show rev arrow
+                snackbar = Snackbar.make(findViewById(android.R.id.content),
+                        "Straight ahead", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }   //if d=1 and userdir in range 1 || d= -1 and userdir in range -1 show normal arrow
+
+            else if(dAll == 1 && getRange(mAbsoluteDir)== 3 && mCross!=1){
                 addObject(Uri.parse("Arrow_straight_Zpos.sfb"));
-            else if(dAll == -1 && getRange(mAbsoluteDir)== 1)  //if d=1 and userdir in range -1 || d= -1 and userdir in range 1 show rev arrow
+                snackbar = Snackbar.make(findViewById(android.R.id.content),
+                        "Reverse" +
+                                "", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }  //if d=1 and userdir in range -1 || d= -1 and userdir in range 1 show rev arrow
+
+            else if(dAll == -1 && getRange(mAbsoluteDir)== 1 && mCross!=1){
                 addObject(Uri.parse("Arrow_straight_Zpos.sfb"));
+                snackbar = Snackbar.make(findViewById(android.R.id.content),
+                        "Reverse", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }  //if d=1 and userdir in range -1 || d= -1 and userdir in range 1 show rev arrow
+            else if(dAll==1 || dAll== -1) {
+                addObject(Uri.parse("Arrow_straight_Zneg.sfb"));
+                snackbar = Snackbar.make(findViewById(android.R.id.content),
+                        "Straight ahead", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }
+
 
             if (dAll==0 && mInstructionNum==0)  //crossing the passage
             {
-                if (getRange(mAbsoluteDir)==1 && mSrcGroup==2) {    //towards 105 dir=1
+                if (getRange(mAbsoluteDir)==1 && mDestGroup==2) {    //towards 105 dir=1
                     addObject(Uri.parse("Arrow_Right_Zneg.sfb"));
+                    snackbar = Snackbar.make(findViewById(android.R.id.content),
+                            "Turn Right Grp 2 105", Snackbar.LENGTH_SHORT);
+                    snackbar.show();
                     mCross=1;
                 }
-                else if (getRange(mAbsoluteDir)==1 && mSrcGroup==1) {   //towards 105 dir=1
+                else if (getRange(mAbsoluteDir)==1 && mDestGroup==1) {   //towards 105 dir=1
                     addObject(Uri.parse("Arrow_Left_Zneg.sfb"));
-                    mCross=2;
+                    snackbar = Snackbar.make(findViewById(android.R.id.content),
+                            "Turn Left Grp 1 105", Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                    mCross=1;
                 }
-                else if (getRange(mAbsoluteDir)== 3 && mSrcGroup==2) {  //towards Ent dir= -1
+                else if (getRange(mAbsoluteDir)== 3 && mDestGroup==2) {  //towards Ent dir= -1
                     addObject(Uri.parse("Arrow_Left_Zneg.sfb"));
-                    mCross=3;
+                    snackbar = Snackbar.make(findViewById(android.R.id.content),
+                            "Turn Left Grp 2 Entrance", Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                    mCross=1;
                 }
-                else if (getRange(mAbsoluteDir)== 3 && mSrcGroup==1) {   //towards Ent dir= -1
+                else if (getRange(mAbsoluteDir)== 3 && mDestGroup==1) {   //towards Ent dir= -1
                     addObject(Uri.parse("Arrow_Right_Zneg.sfb"));
-                    mCross=4;
+                    snackbar = Snackbar.make(findViewById(android.R.id.content),
+                            "Turn Right Grp 1 Entrance", Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                    mCross=1;
                 }
             }
-            if (d==0)
-                addObject(Uri.parse("Arrow_Left_Zneg.sfb"));
+            if (d==0){
+                if (mDestGroup==1 && mSrcNum<mDestNum)
+                    addObject(Uri.parse("Arrow_Right_Zneg.sfb"));
+                else if (mDestGroup==1 && mDestNum<mSrcNum)
+                    addObject(Uri.parse("Arrow_Left_Zneg.sfb"));
+                else if (mDestGroup==2 && mSrcNum<mDestNum)
+                    addObject(Uri.parse("Arrow_Right_Zneg.sfb"));
+                else if (mDestGroup==2 && mDestNum<mSrcNum)
+                    addObject(Uri.parse("Arrow_Left_Zneg.sfb"));
+            }
         }
         numSteps++;
-        if (mInstructionNum==mInstructionCnt) {
-            sensorManager.unregisterListener(ARNavigation.this);
-            Toast.makeText(getApplicationContext(),"Destination has arrived",Toast.LENGTH_SHORT);
-        }
+
     }
 
     //-----------------------------AR Object placement----------------------------------------------
