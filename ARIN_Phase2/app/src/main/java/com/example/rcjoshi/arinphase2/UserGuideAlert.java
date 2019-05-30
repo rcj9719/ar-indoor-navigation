@@ -15,7 +15,6 @@ import java.util.List;
 
 public class UserGuideAlert extends DialogFragment {
 
-    List<String> mNavInstructions;
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
@@ -34,30 +33,9 @@ public class UserGuideAlert extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String strName = arrayAdapter.getItem(which);
-
-                /*
-                AlertDialog.Builder builderInner = new AlertDialog.Builder(getContext());
-                builderInner.setMessage(strName);
-                builderInner.setTitle("Your Selected Item is");
-                builderInner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog,int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builderInner.show();
-                */
-
             }
         });
 
-        //builderSingle.show();
-
-        /*
-        builderSingle.setMessage("" +
-                "\n2. Click next for AR")
-                .setTitle("Navigation");
-        */
         builderSingle.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button

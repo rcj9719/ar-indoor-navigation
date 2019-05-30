@@ -333,7 +333,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             numSteps=0;
             if (mInstructionNum==mInstructionCnt) {
                 sensorManager.unregisterListener(ARNavigation.this);
-                Intent mNextIntent = new Intent(ARNavigation.this, MainActivity.class);
+                Intent mNextIntent = new Intent(ARNavigation.this, SuccessActivity.class);
                 startActivity(mNextIntent);
                 finish();
                 Toast.makeText(getApplicationContext(),"Destination has arrived",Toast.LENGTH_SHORT);
