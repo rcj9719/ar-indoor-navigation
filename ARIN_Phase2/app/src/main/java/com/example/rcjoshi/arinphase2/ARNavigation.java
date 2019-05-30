@@ -169,6 +169,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
                 mDestGroup=2;
         }
 
+        /*
         if (mSavedSrc.equals("Washroom"))
         {   mSrcNum = 108; mSrcGroup=2;   }
         else if (mSavedSrc.equals("Entrance"))
@@ -176,7 +177,8 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         else if (mSavedSrc.equals("HOD Cabin"))
         {   mSrcNum = 109; mSrcGroup=2;   }
         else
-        {
+        */
+//        {
             //mSrcMessage.setText("Source selected: "+mSavedSrc.substring(mSavedSrc.length() - 3));
             //Toast.makeText(getApplicationContext(),"Src:" +mSavedSrc.substring(mSavedSrc.length() - 3),Toast.LENGTH_SHORT).show();
             mSrcNum = Integer.parseInt(mSavedSrc.substring(mSavedSrc.length() - 3));
@@ -185,12 +187,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
                 mSrcGroup=1;
             else
                 mSrcGroup=2;
-        }
-
-        mAryPtrSrc = mSrcNum-101;
-        mAryPtrDest = mDestNum-101;
-        if (mAryPtrSrc>3) mAryPtrSrc-=4;
-        if (mAryPtrDest>3) mAryPtrDest-=4;
+//        }
 
         if (mSrcGroup!=mDestGroup)
         {
@@ -205,6 +202,12 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             mAllInstructionList[1].setPath(0,1);
             mInstructionCnt++;
         }
+
+        mAryPtrSrc = mSrcNum-101;   //109-101 = 8
+        mAryPtrDest = mDestNum-101; //103-101 = 2
+        if (mAryPtrSrc>3) mAryPtrSrc-=4;    // 8
+        if (mAryPtrDest>3) mAryPtrDest-=4;  //2
+
         if (mSrcGroup==1 && mSrcNum>mDestNum) {
             mDir=-1;
             for (int i=mAryPtrSrc-1; i>=mAryPtrDest; i+=mDir)
@@ -254,18 +257,19 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
     private int correspondLoc(int val) {
         switch (val){
             case 101: return 111;
-            case 102: return 110;
-            case 103: return 107;
+            case 102: return 109;
+            case 103: return 108;
             case 104: return 106;
             case 106: return 104;
-            case 107: return 103;
-            case 110: return 102;
+            case 108: return 103;
+            case 109: return 102;
             case 111: return 101;
         }
         return -1;
     }
 
     //----------------------------------Direction ranges--------------------------------------------
+
     public int getRange(int degree){
         int mRangeVal=0;
         if (degree>335 || degree <25)
@@ -278,7 +282,6 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
             mRangeVal=4;
         return mRangeVal;
     }
-
 
     //----------------------------------Sensor Management-------------------------------------------
 

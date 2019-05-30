@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
         // preparing list data
         prepareListData();
-
         listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
 
         // setting list adapter
