@@ -152,7 +152,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         Toast.makeText(getApplicationContext(),"Src: "+mSavedSrc+"\nDestination: "+mSavedDest,Toast.LENGTH_SHORT).show();
 
         if (mSavedDest.equals("Washroom"))
-        {   Toast.makeText(getApplicationContext(),"washroom selected",Toast.LENGTH_SHORT).show();
+        {   //Toast.makeText(getApplicationContext(),"washroom selected",Toast.LENGTH_SHORT).show();
             mDestNum = 108; mDestGroup=2;   }
         else if (mSavedDest.equals("Entrance"))
         {   mDestNum = 111; mDestGroup=2;   }
@@ -161,7 +161,7 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
         else
         {
             //mDestMessage.setText("Destination selected: "+mSavedDest.substring(mSavedDest.length() - 3));
-            Toast.makeText(getApplicationContext(),"Dest:" +mSavedDest.substring(mSavedDest.length() - 3),Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(),"Dest:" +mSavedDest.substring(mSavedDest.length() - 3),Toast.LENGTH_SHORT).show();
             mDestNum = Integer.parseInt(mSavedDest.substring(mSavedDest.length() - 3));
             if (mDestNum<=105)
                 mDestGroup=1;

@@ -197,9 +197,7 @@ public class SourceDetection extends AppCompatActivity{
                 try {
                     saveBitmapToDisk(mBitmap, filename);
                 } catch (IOException e) {
-                    Toast toast = Toast.makeText(SourceDetection.this, e.toString(),
-                            Toast.LENGTH_LONG);
-                    toast.show();
+                    //Toast.makeText(SourceDetection.this, e.toString(),Toast.LENGTH_LONG).show();
                     return;
                 }
                 Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
@@ -220,9 +218,8 @@ public class SourceDetection extends AppCompatActivity{
                 snackbar.show();
             }
             else {
-                Toast toast = Toast.makeText(SourceDetection.this,
-                        "Failed to copyPixels: " + copyResult, Toast.LENGTH_LONG);
-                toast.show();
+                //Toast.makeText(SourceDetection.this,
+                //        "Failed to copyPixels: " + copyResult, Toast.LENGTH_LONG).show();
             }
             handlerThread.quitSafely();
         }, new Handler(handlerThread.getLooper()));
@@ -285,13 +282,12 @@ public class SourceDetection extends AppCompatActivity{
 
         String mText;
         if (mBlocks.size() == 0) {
-            Toast.makeText(SourceDetection.this, "No Text Found", Toast.LENGTH_SHORT)
-                    .show();
+            //Toast.makeText(SourceDetection.this, "No Text Found", Toast.LENGTH_SHORT).show();
             return;
         }
         for (FirebaseVisionText.TextBlock mBlock_i : mVisionText.getTextBlocks()) {
             mText = mBlock_i.getText();
-            Toast.makeText(SourceDetection.this, mText, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SourceDetection.this, mText, Toast.LENGTH_SHORT).show();
             mText = mText.replace("\n", " ");
             mText = detectSource(mText);
             if (mSourceDetectedFlag == 1) {
