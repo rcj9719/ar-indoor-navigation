@@ -66,10 +66,15 @@ public class MainActivity extends AppCompatActivity {
 
         // preparing list data
         prepareListData();
+
         listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
+
+        expListView.expandGroup(0);
+        expListView.expandGroup(1);
+        expListView.expandGroup(2);
 
         // Listview Group click listener
         expListView.setOnGroupClickListener(new OnGroupClickListener() {
