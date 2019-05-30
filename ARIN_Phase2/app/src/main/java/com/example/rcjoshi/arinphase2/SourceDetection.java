@@ -292,7 +292,7 @@ public class SourceDetection extends AppCompatActivity{
             mText = detectSource(mText);
             if (mSourceDetectedFlag == 1) {
                 Snackbar mSnackbar = Snackbar.make(findViewById(android.R.id.content),
-                        "Source detected is "+mText, Snackbar.LENGTH_SHORT);
+                        "Source detected is "+mText + ". Click next", Snackbar.LENGTH_SHORT);
                 mSnackbar.show();
                 ed.putString("sdSrc",mText);
                 ed.commit();
@@ -306,10 +306,12 @@ public class SourceDetection extends AppCompatActivity{
                 mSnackbar.show();
             }
         }
+        /*
         if (mSourceDetectedFlag==1){
             DialogFragment mAlertObject = new UserGuideAlert();
             mAlertObject.show(getSupportFragmentManager(),"nav");
         }
+        */
     }
 
     private String detectSource(String mText) {

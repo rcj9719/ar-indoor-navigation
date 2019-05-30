@@ -8,6 +8,7 @@
         <item name="Lab 105">Lab 105:105</item>
         <item name="Lab 106">Lab 106:106 InfoTech Lab-03 Software Engineering &amp; Database Lab</item>
         <item name="Lab 107">Lab 107:107 InfoTech Lab-07 Networking and Security Lab</item>
+        <item name="PGC">Room 108:109 HOD IT</item>
         <item name="HOD IT">Room 109:109 HOD IT</item>
         <item name="Lab 110">Lab 110:110 InfoTech Lab-10 PG Lab</item>
         <item name="Entrance">Entrance:Information Technology Department Welcomes You</item>
@@ -27,8 +28,8 @@
         <item>Lab 105</item>
         <item>Lab 106</item>
         <item>Lab 107</item>
+        <item>Lab 108</item>
         <item>Lab 110</item>
-        <item>Washroom</item>
         <item>HOD Cabin</item>
         <item>Entrance</item>
     </string-array>

@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -110,6 +111,10 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
 
         mInstructionNum=0;
         numSteps=0;
+
+        DialogFragment mAlertObject = new UserGuideAlert();
+        mAlertObject.show(getSupportFragmentManager(),"nav");
+
         fragment = (ArFragment)
                 getSupportFragmentManager().findFragmentById(R.id.cam_fragment);
         fragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
