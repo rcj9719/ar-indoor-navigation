@@ -29,6 +29,8 @@ import com.google.ar.core.Plane;
 import com.google.ar.core.Trackable;
 import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.math.Quaternion;
+import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
@@ -460,7 +462,11 @@ public class ARNavigation extends AppCompatActivity implements SensorEventListen
 
     private void addNodeToScene(ArFragment fragment, Anchor anchor, Renderable renderable) {
         AnchorNode anchorNode = new AnchorNode(anchor);
+
+        //Handling Rotaional orientation using Quaternion
         TransformableNode node = new TransformableNode(fragment.getTransformationSystem());
+        node.setLocalRotation(Quaternion.axisAngle(new Vector3(0, 1f, 0), 90f));
+
         node.setRenderable(renderable);
         node.setParent(anchorNode);
         fragment.getArSceneView().getScene().addChild(anchorNode);
