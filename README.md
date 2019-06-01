@@ -20,3 +20,15 @@ For this application, we have used ARCore in Android Studio. For the same, we us
 ### Updates
 Google demonstrated AR navigation already integrated with GMaps in Pixel3a in its I/O 2019. Awaiting the same beauty and exerience for indoor navigation... :)
 Also it has pushed for more on-device applications and algorithms so as to enhance privacy and minimise the need to share user data. Pushes this project idea further, yay!
+
+### References
+
+#### mlkit text recogniser tutorial
+https://www.youtube.com/watch?v=T0273WiUQPI
+#### google io 2018 code labs
+https://codelabs.developers.google.com/io2018/
+#### sceneform ar using arcore in android studio ( following 2 links )
+https://codelabs.developers.google.com/codelabs/sceneform-intro/index.html?index=..%2F..index#0
+https://medium.freecodecamp.org/how-to-build-an-augmented-reality-android-app-with-arcore-and-android-studio-43e4676cb36f
+#### pedometer
+http://www.gadgetsaint.com/android/create-pedometer-step-counter-android/#.XPJx8vZuLIU
