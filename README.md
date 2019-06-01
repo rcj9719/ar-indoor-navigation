@@ -23,12 +23,12 @@ Also it has pushed for more on-device applications and algorithms so as to enhan
 
 ### References
 
-#### mlkit text recogniser tutorial
+#### MLkit text recogniser tutorial
 https://www.youtube.com/watch?v=T0273WiUQPI
-#### google io 2018 code labs
+#### Google io 2018 code labs
 https://codelabs.developers.google.com/io2018/
-#### sceneform ar using arcore in android studio ( following 2 links )
+#### Sceneform ar using arcore in android studio
 https://codelabs.developers.google.com/codelabs/sceneform-intro/index.html?index=..%2F..index#0
 https://medium.freecodecamp.org/how-to-build-an-augmented-reality-android-app-with-arcore-and-android-studio-43e4676cb36f
-#### pedometer
+#### Pedometer
 http://www.gadgetsaint.com/android/create-pedometer-step-counter-android/#.XPJx8vZuLIU
