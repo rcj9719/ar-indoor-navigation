@@ -1,6 +1,7 @@
 # ARIN
 ## Augmented Reality for Indoor Navigation
 Augmented Reality for Indoor Navigation System - An Android application for navigating user in an indoor environment with augmented arrows, without continuous data connectivity.
+You can find a demomstration video here: https://www.youtube.com/watch?v=XtAy7S753eQ
 The application consists of 3 main modules:
   1. Source Detection (using text recognition for boards)
   2. Navigation (restricted to 1 floor)
