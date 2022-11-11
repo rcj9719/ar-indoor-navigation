@@ -1,8 +1,7 @@
 # ARIN
 ## Augmented Reality for Indoor Navigation
 Augmented Reality for Indoor Navigation System - An Android application for navigating user in an indoor environment with augmented arrows, without continuous data connectivity.
-You can find a demomstration [video here](https://www.youtube.com/watch?v=XtAy7S753eQ<BR>)
-The application consists of 3 main modules:
+You can find a demomstration [video here](https://www.youtube.com/watch?v=XtAy7S753eQ). The application consists of 3 main modules:
   1. Source Detection (using text recognition for boards)
   2. Navigation (restricted to 1 floor)
   3. AR render (Sceneform render of ARCore)
@@ -24,15 +23,10 @@ Also it has pushed for more on-device applications and algorithms so as to enhan
 
 ### References
 
-#### MLkit text recogniser tutorial
-https://www.youtube.com/watch?v=T0273WiUQPI
-#### Google io 2018 code labs
-https://codelabs.developers.google.com/io2018/
-#### Sceneform ar using arcore in android studio
-https://codelabs.developers.google.com/codelabs/sceneform-intro/index.html?index=..%2F..index#0
-https://medium.freecodecamp.org/how-to-build-an-augmented-reality-android-app-with-arcore-and-android-studio-43e4676cb36f
-https://proandroiddev.com/building-arcore-apps-using-sceneform-part-4-9bb8374eaab4
-#### Sceneform Quaternion handling for rotational orientation update
-https://proandroiddev.com/arcore-cupcakes-4-understanding-quaternion-rotations-f90703f3966e
-#### Pedometer
-http://www.gadgetsaint.com/android/create-pedometer-step-counter-android/#.XPJx8vZuLIU
+- [MLkit text recogniser tutorial](https://www.youtube.com/watch?v=T0273WiUQPI)  
+- [Google io 2018 code labs](https://codelabs.developers.google.com/io2018/)
+- [Sceneform ar using arcore in android studio](https://medium.freecodecamp.org/how-to-build-an-augmented-reality-android-app-with-arcore-and-android-studio-43e4676cb36f)  
+- [Sceneform intro](https://codelabs.developers.google.com/codelabs/sceneform-intro/index.html?index=..%2F..index#0)  
+- [Building ARCore apps using sceneform](https://proandroiddev.com/building-arcore-apps-using-sceneform-part-4-9bb8374eaab4)  
+- [Sceneform Quaternion handling for rotational orientation update](https://proandroiddev.com/arcore-cupcakes-4-understanding-quaternion-rotations-f90703f3966e)  
+- [Pedometer](http://www.gadgetsaint.com/android/create-pedometer-step-counter-android/#.XPJx8vZuLIU)
